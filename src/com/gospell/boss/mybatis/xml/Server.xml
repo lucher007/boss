@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IServerDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	
+	<sql id="whereColumns">
+		<if test="queryservertype != null and queryservertype != ''">
+			<![CDATA[
+				and servertype = #{queryservertype}
+			]]>
+		</if>
+		<if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+		<if test="queryversiontype != null and queryversiontype != ''">
+			<![CDATA[
+				and versiontype = #{queryversiontype}
+			]]>
+		</if>
+	</sql>
+
+	<select id="findByList" parameterType="Server" resultType="Server">
+		<![CDATA[
+			select * from server 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>
+	</select>
+
+	<select id="findByCount" parameterType="Server" resultType="Integer">
+		<![CDATA[
+			select count(1) from server 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+	</select>
+
+	<select id="queryByList" parameterType="Server" resultType="Server">
+		<![CDATA[
+			select * from server 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>
+	</select>
+
+	<select id="findById" parameterType="Integer" resultType="Server">
+		<![CDATA[
+		 	select * from server
+		]]>
+		<where>
+			<include refid="idColumns" />
+		</where>
+	</select>
+
+	<select id="findByServername" parameterType="Server" resultType="Server">
+		<![CDATA[
+		 	select * from server where servername = #{servername} 
+		]]>
+	</select>
+
+	<insert id="save" parameterType="Server">
+		<![CDATA[
+			insert into server (netid,providerid,servertype,servername,versiontype,ip,port,protocols,
+			                    version,encryptionflag,encryptiontype,initialkey,remark)
+			   values (#{netid},#{providerid},#{servertype},#{servername},#{versiontype},#{ip},#{port},#{protocols},
+			           #{version},#{encryptionflag},#{encryptiontype},#{initialkey},#{remark})				
+		]]>
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+
+	<update id="update" parameterType="Server">
+		<![CDATA[
+			update server set netid=#{netid},providerid=#{providerid},servertype=#{servertype},servername=#{servername},versiontype=#{versiontype},
+			                  ip=#{ip},port=#{port},protocols=#{protocols},version=#{version},encryptionflag=#{encryptionflag},
+			                  encryptiontype=#{encryptiontype},initialkey=#{initialkey},remark=#{remark}
+		]]>
+		<where>
+			<include refid="idColumns" />
+		</where>
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from server where id=#{id}
+		]]>
+	</delete>
+
+	<select id="findByServertypeAndVersiontype" parameterType="Server"
+		resultType="Server">
+		<![CDATA[
+		 	select * from server
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="servertype != null and servertype != ''">
+				<![CDATA[
+					and servertype = #{servertype}
+				]]>
+			</if>
+			<if test="netid != null and netid != ''">
+				<![CDATA[
+					and netid = #{netid}
+				]]>
+			</if>
+			<if test="versiontype != null and versiontype != ''">
+				<![CDATA[
+					and versiontype = #{versiontype}
+				]]>
+			</if>
+		</trim>
+	</select>
+
+</mapper>

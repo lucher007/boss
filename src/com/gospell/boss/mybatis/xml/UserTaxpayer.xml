@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IUserTaxpayerDao">
+	
+	
+	<select id="findByUserid" parameterType="UserTaxpayer"  resultType="UserTaxpayer" >
+		<![CDATA[
+		 	select * from usertaxpayer where userid = #{userid}
+		]]>
+	</select>
+	
+	
+	
+	<insert id="save" parameterType="usertaxpayer">
+		<![CDATA[
+			insert into usertaxpayer (userid,taxpayercode,taxpayername,remark)
+			   values (#{userid},#{taxpayercode},#{taxpayername},#{remark})				
+		]]>	
+	</insert>
+	
+	<update id="update" parameterType="UserTaxpayer">
+	
+		update usertaxpayer set userid=#{userid},taxpayercode=#{taxpayercode},taxpayername=#{taxpayername},remark=#{remark}
+		where userid=#{userid}
+	
+	</update>
+	
+</mapper>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IPromotioninfoDao">
+    
+    <sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+    
+	<select id="findAllProductExtend" resultType="Productextend">
+		<![CDATA[
+			select * from productextend 	
+		]]>
+	</select>
+
+	<!-- product extend -->
+	<select id="findByProduct" parameterType="Productextend"
+		resultType="Productextend">
+			<![CDATA[
+			 	select * from productextend where productid = #{productid} and netid = #{netid}
+			]]>
+	</select>
+
+	<select id="findProductextendCount" parameterType="Product"
+		resultType="Integer">
+		<![CDATA[
+			select count(1) from productextend where  productid = #{productid} and netid = #{netid}
+		]]>
+	</select>
+
+	<insert id="saveProductextend" parameterType="Productextend">
+		<![CDATA[
+			insert into productextend (productid,netid,webflag,rank,description,type,filename,preservefilename,preserveurl,remark) values (#{productid},#{netid},#{webflag},#{rank},#{description},#{type},#{filename},#{preservefilename},#{preserveurl},#{remark})				
+		]]>
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+
+
+	<!-- service extend -->
+	<select id="findByService" parameterType="Serviceextend"
+		resultType="Serviceextend">
+					<![CDATA[
+					 	select * from serviceextend where serviceid = #{serviceid} and netid = #{netid}
+					]]>
+	</select>
+
+	<select id="findServiceextendCount" parameterType="Service"
+		resultType="Integer">
+					<![CDATA[
+						select count(1) from serviceextend where  serviceid = #{serviceid} and netid = #{netid}
+					]]>
+	</select>
+
+	<insert id="saveServiceextend" parameterType="Serviceextend">
+				<![CDATA[
+					insert into serviceextend (serviceid,netid,webflag,rank,description,type,filename,preservefilename,preserveurl,remark) values (#{serviceid},#{netid},#{webflag},#{rank},#{description},#{type},#{filename},#{preservefilename},#{preserveurl},#{remark})				
+				]]>
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+					<![CDATA[
+						 select LAST_INSERT_ID() 
+					]]>
+		</selectKey>
+	</insert>
+
+
+	<!-- event extend -->
+	<select id="findByEvent" parameterType="Eventextend" resultType="Eventextend">
+		<![CDATA[
+		 	select * from eventextend where eventid = #{eventid} and netid = #{netid}
+		]]>
+	</select>
+
+	<select id="findEventextendCount" parameterType="Event"
+		resultType="Integer">
+		<![CDATA[
+			select count(1) from eventextend where  eventid = #{eventid} and netid = #{netid}
+		]]>
+	</select>
+
+	<insert id="saveEventextend" parameterType="Eventextend">
+		<![CDATA[
+			insert into eventextend (eventid,netid,webflag,rank,description,type,filename,preservefilename,preserveurl,remark) values (#{eventid},#{netid},#{webflag},#{rank},#{description},#{type},#{filename},#{preservefilename},#{preserveurl},#{remark})				
+		]]>
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+    
+    <select id="findServiceextendById" parameterType="Integer"  resultType="Serviceextend" >
+		<![CDATA[
+		 	select * from serviceextend 
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findProductextendById" parameterType="Integer"  resultType="Productextend" >
+		<![CDATA[
+		 	select * from productextend 
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+    
+    <delete id="deleteProductextend" parameterType="Integer">
+		<![CDATA[
+			delete from productextend where id=#{id}
+		]]>		
+	</delete>
+	
+	<delete id="deleteServiceextend" parameterType="Integer">
+		<![CDATA[
+			delete from serviceextend where id=#{id}
+		]]>		
+	</delete>
+    
+</mapper>

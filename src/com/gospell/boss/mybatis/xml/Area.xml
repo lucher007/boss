@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IAreaDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="pidColumns">
+   		<![CDATA[
+   			pid=#{pid}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+		<if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+		<if test="queryareacode != null and queryareacode != '' and queryareacode != 'null'">
+			<![CDATA[
+				and areacode like concat(#{queryareacodevalid},'%')
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Area" resultType="Area">
+		<![CDATA[
+			select * from area 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by areacode asc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+
+	<select id="findRootArea" parameterType="Area" resultType="Area">
+		<![CDATA[
+			select * from area where pid is null order by id asc limit #{pager_offset},#{pager_openset}
+		]]>
+	</select>
+	
+	<select id="findByCount" parameterType="Area" resultType="Integer">
+		<![CDATA[
+			select count(1) from area 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Area" resultType="Area">
+		<![CDATA[
+			select * from area 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by areacode asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Area" >
+		<![CDATA[
+		 	select * from area
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByPid" parameterType="Integer"  resultType="Area" >
+		<![CDATA[
+		 	select * from area
+		]]>
+		<where>
+			<include refid="pidColumns"/>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="Area">
+		<![CDATA[
+			insert into area (netid,pid,code,areacode,areaname,remark)
+			   values (#{netid},#{pid},#{code},#{areacode},#{areaname},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Area">
+		<![CDATA[
+			update area set netid=#{netid},pid=#{pid},code=#{code},areacode=#{areacode},
+			                  areaname=#{areaname},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from area where id=#{id}
+		]]>		
+	</delete>
+	
+	<select id="findByAreacode" parameterType="Area" resultType="Area">
+		<![CDATA[
+		 	select * from area where areacode = #{areacode} and netid = #{netid} 
+		]]>
+	</select>
+	<select id="findByRemark" parameterType="Area" resultType="Area">
+		<![CDATA[
+		 	select * from area where remark = #{remark} and netid = #{netid} 
+		]]>
+	</select>
+	<select id="queryListByPid" parameterType="Area" resultType="Area" >
+		<![CDATA[
+			select * from area 
+		]]>
+		<where>
+			<if test="netid != null and netid != ''">
+				<![CDATA[
+					and netid = #{netid}
+				]]>
+			</if>
+			<if test="pid != null and pid != ''">
+				<![CDATA[
+					and pid = #{pid}
+				]]>
+			</if>
+			<if test="pid == null or pid == ''">
+				<![CDATA[
+					and pid is null
+				]]>
+			</if>
+		</where>
+	    <![CDATA[
+	      order by areacode asc
+	    ]]>
+	</select> 
+	
+	<delete id="deleteBatchByCode" parameterType="Area">
+		<![CDATA[
+			delete from area where netid=#{netid} and (areacode= #{areacode} or code like concat(#{code},'\_%'))
+		]]>		
+	</delete>
+	
+</mapper>

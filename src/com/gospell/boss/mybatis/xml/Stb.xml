@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IStbDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+		   <if test="queryincardflag != null and queryincardflag != ''">
+			<![CDATA[
+				and incardflag = #{queryincardflag}
+			]]>
+		</if>
+		<if test="queryversiontype != null and queryversiontype != ''">
+			<![CDATA[
+				and versiontype = #{queryversiontype}
+			]]>
+		</if>
+		<if test="queryserverid != null and queryserverid != ''">
+			<![CDATA[
+				and serverid = #{queryserverid}
+			]]>
+		</if>
+	    <if test="queryproviderid != null and queryproviderid != ''">
+			<![CDATA[
+				and providerid = #{queryproviderid}
+			]]>
+		</if>
+		<if test="querystbno != null and querystbno != ''">
+			<![CDATA[
+				and stbno like concat('%',#{querystbno},'%')
+			]]>
+		</if>
+		<if test="querystbnos != null and querystbnos != ''">
+			<![CDATA[
+				and stbno in 	
+			]]>
+			<foreach item="item" index="index" collection="querystbnos" open="(" separator="," close=")">  
+			 #{item}  
+			</foreach> 
+		</if>
+		<if test="querystate != null and querystate != ''">
+			<![CDATA[
+				and state = #{querystate}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Stb" resultType="Stb">
+		<![CDATA[
+			select * from stb 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByCount" parameterType="Stb" resultType="Integer">
+		<![CDATA[
+			select count(1) from stb 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Stb" resultType="Stb">
+		<![CDATA[
+			select * from stb 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Stb" >
+		<![CDATA[
+		 	select * from stb
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByStbno" parameterType="Stb" resultType="Stb">
+		<![CDATA[
+		 	select * from stb where stbno = #{stbno}
+		]]>
+	</select>
+	
+	<select id="findByStbnoStr" parameterType="String" resultType="Stb">
+		<![CDATA[
+		 	select * from stb where stbno = #{stbno}
+		]]>
+	</select>
+	
+	<select id="findByStbnosStr" parameterType="Stb" resultType="Stb">
+		<![CDATA[
+		 	select * from stb 
+		 left join server on server.id = stb.serverid
+		 	 where 1 = 1
+		]]>
+		<if test="querystbnos != null and querystbnos != ''">
+			<![CDATA[
+				and stbno in 	
+			]]>
+			<foreach item="item" index="index" collection="querystbnos" open="(" separator="," close=")">  
+			 #{item}  
+			</foreach> 
+		</if>
+	</select>
+	
+	<insert id="save" parameterType="Stb">
+		<![CDATA[
+			insert into stb (stbno,providerid,netid,versiontype,serverid,stbversion,loaderversion,state,inputtime,outtime,incardflag,batchnum,remark)
+			          values (#{stbno},#{providerid},#{netid},#{versiontype},#{serverid},#{stbversion},#{loaderversion},#{state},
+			                  #{inputtime},#{outtime},#{incardflag},#{batchnum},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	
+	<insert id="saveBatch" parameterType="java.util.List">
+       <![CDATA[
+        INSERT IGNORE INTO stb (stbno,providerid,netid,versiontype,serverid,stbversion,loaderversion,state,inputtime,outtime,incardflag,batchnum,remark)	
+        VALUES
+        ]]>	
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.stbno},
+            #{item.providerid},
+            #{item.netid},
+            #{item.versiontype},
+            #{item.serverid},
+            #{item.stbversion},
+            #{item.loaderversion},
+            #{item.state},
+            #{item.inputtime},
+            #{item.outtime},
+            #{item.incardflag},
+            #{item.batchnum},
+            #{item.remark}
+            )
+        </foreach>
+    </insert>
+	
+	<update id="update" parameterType="Stb">
+		<![CDATA[
+			update stb set stbno=#{stbno},providerid=#{providerid},netid=#{netid},versiontype=#{versiontype},
+			serverid=#{serverid},stbversion=#{stbversion},loaderversion=#{loaderversion},state=#{state},inputtime=#{inputtime},
+			outtime=#{outtime},incardflag=#{incardflag},batchnum=#{batchnum},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from stb where id=#{id}
+		]]>		
+	</delete>
+	
+	<update id="updateStbState" parameterType="Stb">
+		<![CDATA[
+			update stb set state=#{state} where stbno=#{stbno}
+		]]>	
+	</update>
+	
+	<update id="updateStbStateBatch" parameterType="Stb">
+		<![CDATA[
+			update stb set state=#{state} where stbno in (${stbno})
+		]]>	
+	</update>
+	
+</mapper>

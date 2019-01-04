@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IProviderDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="querycompanyname != null and querycompanyname != ''">
+			<![CDATA[
+				and lower(companyname) like lower(concat('%',#{querycompanyname},'%'))
+			]]>
+		</if>
+		<if test="querymodel != null and querymodel != ''">
+			<![CDATA[
+				and lower(model) like lower(concat('%',#{querymodel},'%'))
+			]]>
+		</if>
+		<if test="querytype != null and querytype != ''">
+			<![CDATA[
+				and type = #{querytype}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Provider" resultType="Provider">
+		<![CDATA[
+			select * from provider 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+
+	<select id="findByCount" parameterType="Provider" resultType="Integer">
+		<![CDATA[
+			select count(1) from provider 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Provider" resultType="Provider">
+		<![CDATA[
+			select * from provider 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Provider" >
+		<![CDATA[
+		 	select * from provider
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByCompanyname" parameterType="Provider" resultType="Provider">
+		<![CDATA[
+		 	select * from provider where companyname = #{companyname}
+		]]>
+	</select>
+	
+	<select id="findByModel" parameterType="Provider" resultType="Provider">
+		<![CDATA[
+		 	select * from provider where model = #{model}
+		]]>
+	</select>
+	
+	<insert id="save" parameterType="Provider">
+		<![CDATA[
+			insert into provider (companyname,model,type,mainprice,subprice,address,repairaddress,factoryaddress,businesscontactername,businesscontactertelephone,
+			                      businesscontacteremail,technicalcontactername,technicalcontactertelephone,technicalcontacteremail,remark)
+			   values (#{companyname},#{model},#{type},#{mainprice},#{subprice},#{address},#{repairaddress},#{factoryaddress},#{businesscontactername},#{businesscontactertelephone},
+			           #{businesscontacteremail},#{technicalcontactername},#{technicalcontactertelephone},#{technicalcontacteremail},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Provider">
+		<![CDATA[
+			update provider set companyname=#{companyname},model=#{model},type=#{type},mainprice=#{mainprice},subprice=#{subprice},
+			                    address=#{address},repairaddress=#{repairaddress},factoryaddress=#{factoryaddress},
+			                    businesscontactername=#{businesscontactername},businesscontactertelephone=#{businesscontactertelephone},
+			                    businesscontacteremail=#{businesscontacteremail},technicalcontactername=#{technicalcontactername},
+			                    technicalcontactertelephone=#{technicalcontactertelephone},technicalcontacteremail=#{technicalcontacteremail},
+			                    remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from provider where id=#{id}
+		]]>		
+	</delete>
+	
+</mapper>

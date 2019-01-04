@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.ICaspnforcedosdDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+		<if test="cardid != null and cardid != ''">
+			<![CDATA[
+				and cardid like concat('%',#{cardid},'%')
+			]]>
+		</if>
+		
+		<if test="querydate != null and querydate != ''">
+			<![CDATA[
+				and addtime like concat(#{querydate},'%')
+			]]>
+		</if>
+		<if test="queryversiontype != null and queryversiontype != ''">
+			<![CDATA[
+				and versiontype =#{queryversiontype}
+			]]>
+		</if>
+		<if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid =#{querynetid}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Caspnforcedosd" resultType="Caspnforcedosd">
+		<![CDATA[
+			select * from caspnforcedosd 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+
+	<select id="findByCount" parameterType="Caspnforcedosd" resultType="Integer">
+		<![CDATA[
+			select count(1) from caspnforcedosd 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Caspnforcedosd" resultType="Caspnforcedosd">
+		<![CDATA[
+			select * from caspnforcedosd 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Caspnforcedosd" >
+		<![CDATA[
+		 	select * from caspnforcedosd
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="Caspnforcedosd">
+		<![CDATA[
+			insert into caspnforcedosd (netid,cardid,conditioncontent,expiredtime,starttime,endtime,lockscreen,duration,showtimes,showfreq,priority,style,stylevalue,fontsize,fontcolor,backgroundcolor,backgroundtransparency,content,addtime,remark,
+			   versiontype,stbno,addressingmode,conditioncount,display_style,font,foregroundcolor,foregroundtransparency,scrolldirection,displayfrequency,positionx,positiony,barheight,
+			   screencoveragepercentage,cardiddisplayflag,terminaliddisplayflag,operatoriddisplayflag,privatecontentflag,osdid,displayperiod,displaydurationtime,serviceid,areaiddisplayflag)
+			   values (#{netid},#{cardid},#{conditioncontent},#{expiredtime},#{starttime},#{endtime},#{lockscreen},#{duration},#{showtimes},#{showfreq},#{priority},#{style},#{stylevalue},#{fontsize},#{fontcolor},#{backgroundcolor},#{backgroundtransparency},#{content},#{addtime},#{remark},
+			        #{versiontype},#{stbno},#{addressingmode},#{conditioncount},#{display_style},#{font},#{foregroundcolor},#{foregroundtransparency},#{scrolldirection},#{displayfrequency},#{positionx},#{positiony},#{barheight},
+			          #{screencoveragepercentage},#{cardiddisplayflag},#{terminaliddisplayflag},#{operatoriddisplayflag},#{privatecontentflag},#{osdid},#{displayperiod},#{displaydurationtime},#{serviceid},#{areaiddisplayflag}
+			          )				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Caspnforcedosd">
+		<![CDATA[
+			update caspnforcedosd set netid=#{netid},cardid=#{cardid},conditioncontent=#{conditioncontent},
+			expiredtime=#{expiredtime},starttime=#{starttime},endtime=#{endtime},
+			lockscreen=#{lockscreen},duration=#{duration},showtimes=#{showtimes},showfreq=#{showfreq},
+			priority=#{priority},style=#{style},stylevalue=#{stylevalue},fontsize=#{fontsize},fontcolor=#{fontcolor},
+			backgroundcolor=#{backgroundcolor},backgroundtransparency=#{backgroundtransparency},content=#{content},addtime=#{addtime},remark=#{remark},
+			versiontype=#{versiontype},stbno=#{stbno},addressingmode=#{addressingmode},conditioncount=#{conditioncount},
+			display_style=#{display_style},font=#{remark},font=#{font},foregroundcolor=#{foregroundcolor},foregroundtransparency=#{foregroundtransparency},scrolldirection=#{scrolldirection},
+			displayfrequency=#{displayfrequency},positionx=#{positionx},positiony=#{positiony},barheight=#{barheight},
+			screencoveragepercentage=#{screencoveragepercentage},cardiddisplayflag=#{cardiddisplayflag},terminaliddisplayflag=#{terminaliddisplayflag},
+			operatoriddisplayflag=#{operatoriddisplayflag},privatecontentflag=#{privatecontentflag},osdid=#{osdid},displayperiod=#{displayperiod},displaydurationtime=#{displaydurationtime},serviceid=#{serviceid},areaiddisplayflag=#{areaiddisplayflag}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from caspnforcedosd where id=#{id}
+		]]>		
+	</delete>
+	
+</mapper>

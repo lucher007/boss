@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IUserstbDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">
+		<if test="queryuserid != null and queryuserid != ''">
+			<![CDATA[
+				and userid = #{queryuserid}
+			]]>
+		</if>
+		<if test="querystbno != null and querystbno != ''">
+			<![CDATA[
+				and stbno like concat('%',#{querystbno},'%')
+			]]>
+		</if>
+		<if test="querystate != null and querystate != ''">
+			<![CDATA[
+				and state = #{querystate}
+			]]>
+		</if>
+		<if test="userid != null and userid != ''">
+			<![CDATA[
+				and userid = #{userid}
+			]]>
+		</if>
+		<if test="querynetid != null and querynetid != '' and querynetid != 'null'">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+		<if test="queryserverid != null and queryserverid != ''">
+			<![CDATA[
+				and serverid = #{queryserverid}
+			]]>
+		</if>
+		<if test="queryareacode != null and queryareacode != '' and queryareacode != 'null'">
+			<![CDATA[
+				and areacode like concat(#{queryareacodevalid},'%')
+			]]>
+		</if>
+		
+		<if test="stbnos != null and stbnos != ''">
+			<![CDATA[
+				and stbno in (${stbnos})
+			]]>
+		</if>
+		
+	</sql>
+
+	<select id="findByList" parameterType="Userstb" resultType="Userstb">
+		<![CDATA[
+			select * from userstb 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>
+	</select>
+	
+	<select id="findByListForUserquery" parameterType="Userstb" resultType="Userstb">
+		<![CDATA[
+			select DISTINCT userid from userstb 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>
+	</select>
+	
+
+
+	<select id="queryByUserid" parameterType="Integer" resultType="Userstb">
+		<![CDATA[
+			select * from userstb where userid = #{userid}
+		]]>
+	</select>
+
+
+	<select id="queryNocardUserstbByUserid" parameterType="Integer"
+		resultType="Userstb">
+		<![CDATA[
+			select * from userstb where userid = #{userid} and incardflag ='2'
+		]]>
+	</select>
+
+
+
+	<select id="findByCount" parameterType="Userstb" resultType="Integer">
+		<![CDATA[
+			select count(1) from userstb 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+	</select>
+	
+	<select id="findByCountForUserquery" parameterType="Userstb" resultType="Integer">
+		<![CDATA[
+			select count(DISTINCT userid) from userstb 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+	</select>
+
+	<select id="queryByList" parameterType="Userstb" resultType="Userstb">
+		<![CDATA[
+			select * from userstb 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>
+	</select>
+
+	<select id="findById" parameterType="Integer" resultType="Userstb">
+		<![CDATA[
+		 	select * from userstb
+		]]>
+		<where>
+			<include refid="idColumns" />
+		</where>
+	</select>
+
+	<select id="findByStbno" parameterType="Userstb" resultType="Userstb">
+		<![CDATA[
+		 	select * from userstb where stbno = #{stbno}
+		]]>
+	</select>
+    
+    <select id="findByStbnoStr" parameterType="String" resultType="Userstb">
+		<![CDATA[
+		 	select * from userstb where stbno = #{stbno}
+		]]>
+	</select>
+    
+    
+	<insert id="save" parameterType="Userstb">
+		<![CDATA[
+			insert into userstb (netid,areacode,userid,serverid,stbno,incardflag,addtime,mothercardflag,mothercardid,state,price,remark)
+			          values (#{netid},#{areacode},#{userid},#{serverid},#{stbno},#{incardflag},#{addtime},
+			                  #{mothercardflag},#{mothercardid},#{state},#{price},#{remark})				
+		]]>
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+
+	<update id="update" parameterType="Userstb">
+		<![CDATA[
+			update userstb set netid=#{netid},areacode=#{areacode},userid=#{userid},serverid=#{serverid},stbno=#{stbno},incardflag=#{incardflag},
+			               addtime=#{addtime},mothercardflag=#{mothercardflag},mothercardid=#{mothercardid},
+			               state=#{state},price=#{price},remark=#{remark}
+		]]>
+		<where>
+			<include refid="idColumns" />
+		</where>
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from userstb where id=#{id}
+		]]>
+	</delete>
+
+	<select id="findUserstbCountByServerVersiontype" parameterType="Userstb" resultType="Integer">
+		<![CDATA[
+			select count(1) from userstb 
+			           left join server on userstb.serverid = server.id 
+			               where versiontype = #{versiontype} and userstb.netid = #{netid}
+		]]>
+		<if test="querystbno != null and querystbno != ''">
+			<![CDATA[
+				and userstb.stbno like concat('%',#{querystbno},'%')
+			]]>
+		</if>
+	</select>
+
+	<select id="findUserstbListByServerVersiontype" parameterType="Userstb" resultType="Userstb">
+		<![CDATA[
+			select  *   from userstb  
+			       left join server on userstb.serverid = server.id 
+			           where versiontype= #{versiontype} and userstb.netid = #{netid}
+		]]>
+		<if test="querystbno != null and querystbno != ''">
+			<![CDATA[
+				and userstb.stbno like concat('%',#{querystbno},'%')
+			]]>
+		</if>
+		<![CDATA[
+			order by userstb.id desc limit #{pager_offset},#{pager_openset}
+		]]>
+	</select>
+    
+    <update id="updateUserstbAreacode" parameterType="Userstb">
+		<![CDATA[
+			update userstb set areacode=#{areacode} where userid = #{userid}
+		]]>
+	</update>
+    
+    <update id="updateStateByStbno" parameterType="Userstb">
+		<![CDATA[
+			update userstb set state=#{state} where stbno = #{stbno}
+		]]>
+	</update>
+    
+    <select id="findByMotherstbno" parameterType="String" resultType="Userstb">
+		<![CDATA[
+			select * from userstb where mothercardid = #{motherstbno} 
+		]]>
+	</select>
+    
+    <update id="updateState_batch" parameterType="Userstb">
+		<![CDATA[
+			update userstb set state=#{state} where userid =#{userid} and stbno in (${stbnos})
+		]]>
+	</update>
+	
+	<select id="findByStbidStrBatch" parameterType="java.util.List"  resultType="Userstb" >
+		<![CDATA[
+		 	select * from userstb where stbno in
+		]]>
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">  
+		 #{item}  
+		</foreach> 
+	</select>
+	
+</mapper>

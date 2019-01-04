@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IUserbusinessDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+	    <if test="queryuserid != null and queryuserid != ''">
+			<![CDATA[
+				and userid = #{queryuserid}
+			]]>
+		</if>
+		<if test="queryoperatorid != null and queryoperatorid != ''">
+			<![CDATA[
+				and operatorid = #{queryoperatorid}
+			]]>
+		</if>
+		<if test="querylogout != null and querylogout != ''">
+			<![CDATA[
+				and logout = #{querylogout}
+			]]>
+		</if>
+		<if test="querysource != null and querysource != ''">
+			<![CDATA[
+				and source = #{querysource}
+			]]>
+		</if>
+		<if test="userid != null and userid != ''">
+			<![CDATA[
+				and userid = #{userid}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Userbusiness" resultType="Userbusiness">
+		<![CDATA[
+			select * from userbusiness 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByCount" parameterType="Userbusiness" resultType="Integer">
+		<![CDATA[
+			select count(1) from userbusiness 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Userbusiness" resultType="Userbusiness">
+		<![CDATA[
+			select * from userbusiness 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Userbusiness" >
+		<![CDATA[
+		 	select * from userbusiness
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByUserid" parameterType="Integer"  resultType="Userbusiness" >
+		<![CDATA[
+		 	select * from userbusiness where userid = #{userid}
+		]]>
+		
+	</select>
+	
+	
+	
+	<insert id="save" parameterType="Userbusiness">
+		<![CDATA[
+			insert into userbusiness (netid,operatorid,userid,storeid,areacode,totalmoney,score,scoremoney,
+			accountmoney,shouldmoney,paymoney,discount,addtime,logout,source,buyerid,paytype,remark)
+			 values (#{netid},#{operatorid},#{userid},#{storeid},#{areacode},#{totalmoney},#{score},#{scoremoney},
+			                         #{accountmoney},#{shouldmoney},#{paymoney},#{discount},#{addtime},#{logout},#{source},#{buyerid},#{paytype},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Userbusiness">
+		<![CDATA[
+			update userbusiness set netid=#{netid},operatorid=#{operatorid},userid=#{userid},storeid=#{storeid},
+			               areacode=#{areacode},totalmoney=#{totalmoney},score=#{score},scoremoney=#{scoremoney},accountmoney=#{accountmoney},
+			               shouldmoney=#{shouldmoney},paymoney=#{paymoney},discount=#{discount},addtime=#{addtime},logout=#{logout},source=#{source},buyerid=#{buyerid},paytype=#{paytype},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from userbusiness where id=#{id}
+		]]>		
+	</delete>
+	
+	<update id="updateInvoicecode" parameterType="Userbusiness">
+		<![CDATA[
+			update userbusiness set invoicecode=#{invoicecode}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+</mapper>

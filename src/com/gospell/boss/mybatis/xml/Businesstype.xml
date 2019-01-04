@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IBusinesstypeDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="querytypekey != null and querytypekey != ''">
+			<![CDATA[
+				and typekey = #{querytypekey}
+			]]>
+		</if>
+		<if test="querystate != null and querystate != ''">
+			<![CDATA[
+				and state = #{querystate}
+			]]>
+		</if>
+		<if test="querydefinedflag != null and querydefinedflag != ''">
+			<![CDATA[
+				and definedflag = #{querydefinedflag}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Businesstype" resultType="Businesstype">
+		<![CDATA[
+			select * from businesstype 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by showorder asc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByCount" parameterType="Businesstype" resultType="Integer">
+		<![CDATA[
+			select count(1) from businesstype 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Businesstype" resultType="Businesstype">
+		<![CDATA[
+			select * from businesstype 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by showorder asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Businesstype" >
+		<![CDATA[
+		 	select * from businesstype
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="Businesstype">
+		<![CDATA[
+			insert into businesstype (typekey,typename,feename,price,state,showorder,definedflag,remark)
+			 values (#{typekey},#{typename},#{feename},#{price},#{state},#{showorder},#{definedflag},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Businesstype">
+		<![CDATA[
+			update businesstype set typekey=#{typekey},typename=#{typename},feename=#{feename},price=#{price},state=#{state},showorder=#{showorder},definedflag=#{definedflag},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from businesstype where id=#{id}
+		]]>		
+	</delete>
+	
+	<select id="findByTypekey" parameterType="Businesstype"  resultType="Businesstype" >
+		<![CDATA[
+		 	select * from businesstype where typekey = #{typekey}
+		]]>
+	</select>
+	
+	<select id="findByTypekeyStr" parameterType="String"  resultType="Businesstype" >
+		<![CDATA[
+		 	select * from businesstype where typekey = #{typekey}
+		]]>
+	</select>
+	
+	
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IStoreDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+		<if test="querystorecode != null and querystorecode != ''">
+			<![CDATA[
+				and storecode = #{querystorecode}
+			]]>
+		</if>
+		<if test="querystate != null and querystate != ''">
+			<![CDATA[
+				and state = #{querystate}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Store" resultType="Store">
+		<![CDATA[
+			select * from store 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByCount" parameterType="Store" resultType="Integer">
+		<![CDATA[
+			select count(1) from store 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Store" resultType="Store">
+		<![CDATA[
+			select * from store 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Store" >
+		<![CDATA[
+		 	select * from store
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByStorecode" parameterType="Store" resultType="Store">
+		<![CDATA[
+		 	select * from store where netid = #{netid} and storecode = #{storecode}
+		]]>
+	</select>
+	
+	<insert id="save" parameterType="Store">
+		<![CDATA[
+			insert into store (netid,storecode,storename,address,state,remark)
+			   values (#{netid},#{storecode},#{storename},#{address},#{state},#{remark})				
+		]]>	
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Store">
+		<![CDATA[
+			update store set netid=#{netid},storecode=#{storecode},storename=#{storename},
+			       address=#{address},state=#{state},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from store where id=#{id}
+		]]>		
+	</delete>
+	
+</mapper>

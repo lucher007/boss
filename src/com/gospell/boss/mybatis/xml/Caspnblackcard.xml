@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.ICaspnblackcardDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+		<if test="querycardid != null and querycardid != ''">
+			<![CDATA[
+				and cardid like concat('%',#{querycardid},'%')
+			]]>
+		</if>
+		
+		<if test="querydate != null and querydate != ''">
+			<![CDATA[
+				and addtime like concat(#{querydate},'%')
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Caspnblackcard" resultType="Caspnblackcard">
+		<![CDATA[
+			select * from caspnblackcard 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+
+	<select id="findByCount" parameterType="Caspnblackcard" resultType="Integer">
+		<![CDATA[
+			select count(1) from caspnblackcard 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Caspnblackcard" resultType="Caspnblackcard">
+		<![CDATA[
+			select * from caspnblackcard 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Caspnblackcard" >
+		<![CDATA[
+		 	select * from caspnblackcard
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+		<select id="findByRemark" parameterType="String"  resultType="Caspnblackcard" >
+		<![CDATA[
+		 	select * from caspnblackcard where cardid=#{cardid} and remark = #{remark}
+		]]>
+	</select>
+	
+	
+	
+	<insert id="save" parameterType="Caspnblackcard">
+		<![CDATA[
+			insert into caspnblackcard (cardid,remark,stbno,netid,versiontype,addressingmode,conditioncount,conditioncontent,addtime) 
+			     values (#{cardid},#{remark},#{stbno},#{netid},#{versiontype},#{addressingmode},#{conditioncount},#{conditioncontent},#{addtime})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Caspnblackcard">
+		<![CDATA[
+			update caspnblackcard set cardid=#{cardid},remark=#{remark},stbno=#{stbno},netid=#{netid},versiontype=#{versiontype},
+			addressingmode=#{addressingmode},conditioncount=#{conditioncount},conditioncontent=#{conditioncontent},addtime=#{addtime}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from caspnblackcard where id=#{id}
+		]]>		
+	</delete>
+	
+	<delete id="deleteByCardid" parameterType="Caspnblackcard">
+		<![CDATA[
+			delete from caspnblackcard where cardid=#{cardid}
+		]]>		
+	</delete>
+	
+</mapper>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IOperatorDao">
+    <sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	
+	<sql id="whereColumns">				
+		<if test="queryoperatorname != null and queryoperatorname != ''">
+			<![CDATA[
+				and operatorname like concat('%',#{queryoperatorname},'%')
+			]]>
+		</if>
+		<if test="queryoperatorcode != null and queryoperatorcode != ''">
+			<![CDATA[
+				and LPAD(id, 8, 0) like concat('%',#{queryoperatorcode},'%')
+			]]>
+		</if>
+		<if test="queryloginname != null and queryloginname != ''">
+			<![CDATA[
+				and loginname like concat('%',#{queryloginname},'%')
+			]]>
+		</if>
+		<if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+		<if test="queryareacode != null and queryareacode != ''">
+			<![CDATA[
+				and areacode like concat(#{queryareacodevalid},'%')
+			]]>
+		</if>
+		<if test="querystoreid != null and querystoreid != ''">
+			<![CDATA[
+				and storeid = #{querystoreid}
+			]]>
+		</if>
+		<if test="querystate != null and querystate != ''">
+			<![CDATA[
+				and state = #{querystate}
+			]]>
+		</if>
+		<if test="queryoperatortype != null and queryoperatortype != ''">
+			<![CDATA[
+				and operatortype = #{queryoperatortype}
+			]]>
+		</if>
+		<if test="queryoperatorlevel != null and queryoperatorlevel != ''">
+			<![CDATA[
+				and operatorlevel = #{queryoperatorlevel}
+			]]>
+		</if>
+		<if test="id != null and id != ''">
+			<![CDATA[
+				and id = #{id}
+			]]>
+		</if>
+	</sql>
+	
+	<insert id="save" parameterType="Operator">
+		<![CDATA[
+   			insert into operator (netid,areacode,storeid,loginname,password,operatorname,operatortype,operatorlevel,email,address,
+   			                      telephone,mobile,documenttype,documentno,addtime,state,remark) 
+   			               values(#{netid},#{areacode},#{storeid},#{loginname},#{password},#{operatorname},#{operatortype},#{operatorlevel},#{email},#{address},
+   			                      #{telephone},#{mobile},#{documenttype},#{documentno},#{addtime},#{state},#{remark})
+   		]]>
+   		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+   
+	<update id="update" parameterType="Operator">
+		<![CDATA[
+			update operator set netid=#{netid},areacode=#{areacode},storeid=#{storeid},operatorname=#{operatorname},email=#{email},
+			                    address=#{address},telephone=#{telephone},mobile=#{mobile},operatortype=#{operatortype},operatorlevel=#{operatorlevel},
+			                    documenttype=#{documenttype},documentno=#{documentno},state=#{state},remark=#{remark}
+			                    
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Operator">
+		<![CDATA[
+			delete from operator
+		]]>		
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</delete>
+	
+	<select id="findByList" parameterType="Operator" resultType="Operator">
+		<![CDATA[
+			select * from operator
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+			order by id desc limit ${page_start},${rows}
+		]]>
+	</select>
+	
+	<select id="findByListForOldPage" parameterType="Operator" resultType="Operator">
+		<![CDATA[
+			select * from operator
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+			order by id desc limit #{pager_offset},#{pager_openset}
+		]]>
+	</select>
+	
+	<select id="findByCount" parameterType="Operator" resultType="Integer">
+		<![CDATA[
+			select count(1) from operator
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Operator" resultType="Operator">
+		<![CDATA[
+			select * from operator 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Operator" resultType="Operator">
+		<![CDATA[
+		 	select * from operator
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByLoginname" parameterType="Operator" resultType="Operator">
+		<![CDATA[
+		 	select * from operator where loginname = #{loginname}
+		]]>
+	</select>
+	
+	<update id="updatePassword" parameterType="Operator">
+		<![CDATA[
+			update operator set password=#{password}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	
+	
+	<select id="findByAnyInfo" parameterType="Operator"  resultType="Operator" >
+		<![CDATA[
+		 	select * from operator
+		]]>
+
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="mobile != null and mobile != ''">
+			<![CDATA[
+ 				and mobile = #{mobile}
+ 			]]>
+ 			</if>
+ 			
+ 				<if test="loginname != null and loginname != ''">
+			<![CDATA[
+ 				and loginname = #{loginname}
+ 			]]>
+ 			</if>
+			
+			<if test="documentno != null and documentno != ''">
+			<![CDATA[
+ 		 		and documentno = #{documentno}
+ 			]]>
+			</if>
+			
+			<if test="id != null and id != ''">
+			<![CDATA[
+ 		 		and id = #{id}
+ 			]]>
+			</if>
+		</trim>
+	</select>
+	
+</mapper>

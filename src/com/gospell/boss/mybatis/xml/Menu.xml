@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IMenuDao">
+
+	<sql id="findByWhere">
+		<if test="state != null and state != ''">
+			<![CDATA[
+					and state = #{state}
+			]]>
+		</if>
+		<if test="menutype != null and menutype != ''">
+			<![CDATA[
+					and menutype = #{menutype}
+			]]>
+		</if>
+	</sql>
+
+	<sql id="findByWhereId">
+		<![CDATA[
+		   id = #{id}
+	    ]]>
+	</sql>
+
+	<select id="findByList" parameterType="Menu" resultType="Menu">
+		<![CDATA[
+			select * from menu 	
+			]]>
+		<where>
+			<include refid="findByWhere" />
+		</where>
+			<![CDATA[
+			 	order by menuorder+0 asc limit #{pager_offset},#{pager_openset}
+		]]>
+	</select>
+
+	<select id="findByCount" parameterType="Menu" resultType="Integer">
+		<![CDATA[
+			select count(1) from menu 
+		]]>
+		<where>
+			<include refid="findByWhere" />
+		</where>
+	</select>
+
+	<select id="queryByList" parameterType="Menu" resultType="Menu">
+		<![CDATA[
+			select * from menu 
+			]]>
+		<where>
+			<include refid="findByWhere" />
+		</where>
+			<![CDATA[
+			 	order by menuorder + 0 asc
+		]]>
+	</select>
+
+	<select id="querySecondMenuByPid" parameterType="Menu"
+		resultType="Menu">
+		<![CDATA[
+			select * from menu where pid = #{id} and state = #{state} order by menuorder + 0 asc
+		]]>
+	</select>
+
+	<select id="findById" parameterType="Menu" resultType="Menu">
+		<![CDATA[
+		 	select * from menu
+		]]>
+		<where>
+			<include refid="findByWhere" />
+		</where>
+	</select>
+
+	<select id="queryFirstMenuByRoleid" parameterType="Integer"
+		resultType="Menu">
+		<![CDATA[
+			select m.pid from menu m LEFT JOIN rolemenuref rm ON m.id=rm.meunuid where rm.roleid =  #{roleid} and m.menutype = '2' GROUP BY m.pid
+		]]>
+	</select>
+
+	<select id="queryMenuByIds" parameterType="java.util.List"
+		resultType="Menu">
+       <![CDATA[
+        select * from menu where id in 
+        ]]>
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		   <![CDATA[
+       order by menuorder + 0 asc
+        ]]>
+	</select>
+
+	<select id="queryRelatedSecondMenu" parameterType="Menu"
+		resultType="Menu">
+		<![CDATA[
+			select * from menu m LEFT JOIN rolemenuref rm ON m.id=rm.meunuid where rm.roleid =  #{roleid} and m.menutype = '2' and m.pid = #{pid} order by m.menuorder + 0 asc
+		]]>
+	</select>
+
+	<insert id="save" parameterType="Menu">
+		<![CDATA[
+			insert into menu (menutype,menuorder,menuname,menucode,state,menuurl,remark)
+			        values (#{menutype},#{menuorder},#{menuname},#{menucode},#{state},#{menuurl},#{remark})				
+		]]>
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+
+	<update id="update" parameterType="Menu">
+		<![CDATA[
+			update menu set menutype=#{netid},menuorder=#{menuorder},menuname=#{menuname},
+			menucode=#{menucode},state=#{state},menuurl=#{menuurl},remark=#{remark}
+		]]>
+		<where>
+			<include refid="findByWhere" />
+		</where>
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from menu where id=#{id}
+		]]>
+	</delete>
+
+</mapper>

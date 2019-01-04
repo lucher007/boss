@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IOperatorrolerefDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">
+	</sql>
+
+
+	<select id="findByList" parameterType="Operatorroleref"
+		resultType="Operatorroleref">
+		<![CDATA[
+			select * from operatorroleref 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>
+	</select>
+
+	<select id="findByCount" parameterType="Operatorroleref"
+		resultType="Integer">
+		<![CDATA[
+			select count(1) from operatorroleref 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+	</select>
+
+	<select id="queryByList" parameterType="Operatorroleref"
+		resultType="Operatorroleref">
+		<![CDATA[
+			select * from operatorroleref 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>
+	</select>
+
+
+
+	<select id="findById" parameterType="Integer" resultType="Operatorroleref">
+		<![CDATA[
+		 	select * from operatorroleref
+		]]>
+		<where>
+			<include refid="idColumns" />
+		</where>
+	</select>
+
+	<select id="findByOperatorid" parameterType="Integer"
+		resultType="Operatorroleref">
+		<![CDATA[
+		 	select * from operatorroleref where operatorid = #{operatorid}
+		]]>
+	</select>
+	
+		<select id="findByRoleid" parameterType="Integer" resultType="Operatorroleref">
+		<![CDATA[
+		 	select * from operatorroleref where roleid = #{roleid}
+		]]>
+	</select>
+
+	<insert id="save" parameterType="Operatorroleref">
+		<![CDATA[
+			insert into operatorroleref (operatorid,roleid,remark) values (#{operatorid},#{roleid},#{remark})				
+		]]>
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+
+	<update id="update" parameterType="Operatorroleref">
+		<![CDATA[
+			update operatorroleref set operatorid=#{operatorid},roleid=#{roleid},remark=#{remark}
+		]]>
+		<where>
+			<include refid="idColumns" />
+		</where>
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from operatorroleref where id=#{id}
+		]]>
+	</delete>
+
+	<insert id="saveBatch" parameterType="java.util.List">
+       <![CDATA[
+        INSERT IGNORE INTO operatorroleref (operatorid,roleid,remark)	
+        VALUES
+        ]]>
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(
+			#{item.operatorid},
+			#{item.roleid},
+			#{item.remark}
+			)
+		</foreach>
+	</insert>
+
+</mapper>

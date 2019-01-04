@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IUserproductDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+		<if test="querycardid != null and querycardid != ''">
+			<![CDATA[
+				and cardid like concat('%',#{querycardid},'%')
+			]]>
+		</if>
+		<if test="querystbno != null and querystbno != ''">
+			<![CDATA[
+				and stbno like concat('%',#{querystbno},'%')
+			]]>
+		</if>
+		<if test="queryterminalid != null and queryterminalid != ''">
+			<![CDATA[
+				and terminalid like concat('%',#{queryterminalid},'%')
+			]]>
+		</if>
+		<if test="querystate != null and querystate != ''">
+			<![CDATA[
+				and state = #{querystate}
+			]]>
+		</if>
+		<if test="endtime != null and endtime != ''">
+			<![CDATA[
+				and endtime >= #{endtime}
+			]]>
+		</if>
+		<if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+		<if test="queryareacode != null and queryareacode != ''">
+			<![CDATA[
+				and areacode = #{queryareacode}
+			]]>
+		</if>
+		<if test="userid != null and userid != ''">
+			<![CDATA[
+				and userid = #{userid}
+			]]>
+		</if>
+		<if test="queryuserid != null and queryuserid != ''">
+			<![CDATA[
+				and userid = #{queryuserid}
+			]]>
+		</if>
+		<if test="cardid != null and cardid != ''">
+			<![CDATA[
+				and cardid = #{cardid}
+			]]>
+		</if>
+		<if test="terminalid != null and terminalid != ''">
+			<![CDATA[
+				and terminalid = #{terminalid}
+			]]>
+		</if>
+		<if test="terminalids != null and terminalids != ''">
+			<![CDATA[
+				and terminalid in (${terminalids})
+			]]>
+		</if>
+		<if test="qterminalids != null and qterminalids != ''">
+			<![CDATA[
+				and terminalid in 	
+			]]>
+			<foreach item="item" index="index" collection="qterminalids" open="(" separator="," close=")">  
+			 #{item}  
+			</foreach> 
+		</if>
+		<if test="qproductids != null and qproductids != ''">
+			<![CDATA[
+				and id in 	
+			]]>
+			<foreach item="item" index="index" collection="qproductids" open="(" separator="," close=")">  
+			 #{item}  
+			</foreach> 
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Userproduct" resultType="Userproduct">
+		<![CDATA[
+			select * from userproduct 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByCount" parameterType="Userproduct" resultType="Integer">
+		<![CDATA[
+			select count(1) from userproduct 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Userproduct" resultType="Userproduct">
+		<![CDATA[
+			select * from userproduct 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Userproduct" >
+		<![CDATA[
+		 	select * from userproduct
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByUserid" parameterType="Integer"  resultType="Userproduct" >
+		<![CDATA[
+		 	select * from userproduct where userid = #{userid}
+		]]>
+		
+	</select>
+	
+	
+	<insert id="save" parameterType="Userproduct">
+		<![CDATA[
+			     insert into userproduct (netid,areacode,userid,serverid,terminalid,terminaltype,cardid,stbno,productid,productname,type,source,buyerid,addtime,starttime,endtime,state,restday,price,unit,buyamount,totalmoney,remark)
+	     values (#{netid},#{areacode},#{userid},#{serverid},#{terminalid},#{terminaltype},#{cardid},#{stbno},#{productid},#{productname},#{type},#{source},#{buyerid},#{addtime},#{starttime},#{endtime},#{state},#{restday},#{price},#{unit},#{buyamount},#{totalmoney},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<insert id="saveBatch" parameterType="java.util.List">
+       <![CDATA[
+        INSERT IGNORE INTO userproduct (netid,areacode,userid,serverid,terminalid,terminaltype,cardid,stbno,productid,productname,type,source,buyerid,addtime,starttime,endtime,state,restday,price,unit,buyamount,totalmoney,remark)
+        VALUES
+        ]]>	
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.netid},
+            #{item.areacode},
+            #{item.userid},
+            #{item.serverid},
+            #{item.terminalid},
+            #{item.terminaltype},
+            #{item.cardid},
+            #{item.stbno},
+            #{item.productid},
+            #{item.productname},
+            #{item.type},
+            #{item.source},
+            #{item.buyerid},
+            #{item.addtime},
+            #{item.starttime},
+            #{item.endtime},
+            #{item.state},
+            #{item.restday},
+            #{item.price},
+            #{item.unit},
+            #{item.buyamount},
+            #{item.totalmoney},
+            #{item.remark}
+            )
+        </foreach>
+    </insert>
+	
+	<update id="update" parameterType="Userproduct">
+		<![CDATA[
+			update userproduct set netid=#{netid},areacode=#{areacode},userid=#{userid},serverid=#{serverid},terminalid=#{terminalid},terminaltype=#{terminaltype},cardid=#{cardid},stbno=#{stbno},productid=#{productid},
+			               productname=#{productname},type=#{type},source=#{source},buyerid=#{buyerid},addtime=#{addtime},starttime=#{starttime},
+			               endtime=#{endtime},state=#{state},restday=#{restday},price=#{price},unit=#{unit},buyamount=#{buyamount},totalmoney=#{totalmoney},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from userproduct where id=#{id}
+		]]>		
+	</delete>
+	
+	<select id="findLastEndTimeByProductid" parameterType="Userproduct" resultType="java.lang.String">
+		<![CDATA[
+			select date_format(max(endtime),'%Y-%c-%d')  from userproduct 
+			
+			where type=#{type} and productid = #{productid}
+		]]>
+		<if test="cardid != null and cardid != ''">
+			<![CDATA[
+				and cardid = #{cardid}
+			]]>
+		</if>
+		<if test="stbno != null and stbno != ''">
+			<![CDATA[
+				and stbno = #{stbno}
+			]]>
+		</if>
+		<if test="terminalid != null and terminalid != ''">
+			<![CDATA[
+				and terminalid = #{terminalid}
+			]]>
+		</if>
+		
+	</select>
+
+	
+	<select id="findUserProductReport" parameterType="Userproduct" resultType="BusinessReport">
+  		<![CDATA[
+			SELECT netid,productid,productname,state,count(productid) as count FROM userproduct 
+		]]>
+  		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>		
+		</trim>
+		<![CDATA[
+				GROUP BY productid,state
+			]]>
+			
+		<if test="pager_openset != null and pager_openset != 0">
+			<![CDATA[
+		 	order by count desc limit #{pager_offset},#{pager_openset}
+			]]>
+		</if>
+		
+	
+    </select>
+	
+	<select id="findByTerminalid" parameterType="Userproduct"  resultType="Userproduct" >
+		<![CDATA[
+		 	select * from userproduct where terminalid = #{terminalid}
+		]]>
+	</select>
+	
+	<select id="findByTerminalidStr" parameterType="String"  resultType="Userproduct" >
+		<![CDATA[
+		 	select * from userproduct where terminalid = #{terminalid}
+		]]>
+	</select>
+	
+	<update id="updateUserproductAreacode" parameterType="Userproduct">
+		<![CDATA[
+			update userproduct set areacode=#{areacode} where userid = #{userid}
+		]]>
+	</update>
+	
+	<select id="findPurchasedProductInTimePeriod" parameterType="Userproduct"  resultType="Userproduct" >
+		<![CDATA[
+		 	select * from userproduct 
+		 	        where   terminalid = #{terminalid} and productid = #{productid}
+		 	          and (
+		 	          	   (   
+                             starttime <= #{starttime} and #{starttime} <= endtime
+		 	               ) or (
+                             starttime <= #{endtime}   and #{endtime} <= endtime
+                           ) OR (
+							 #{starttime} < starttime  and endtime < #{endtime}  				
+                           )
+                         )
+		]]>
+	</select>
+	
+	<select id="findPurchasedProductOutTimePeriod" parameterType="Userproduct"  resultType="Userproduct" >
+		<![CDATA[
+		 	select * from userproduct 
+		 	        where terminalid = #{terminalid}  and productid = #{productid}
+		 	          and starttime <= #{starttime}   and  #{endtime} <= endtime  
+		 	               
+		]]>
+	</select>
+	
+	<select id="findMaxEndtimeProduct" parameterType="Userproduct"  resultType="Userproduct" >
+		<![CDATA[
+		 	select terminalid,productid,max(endtime) endtime from userproduct 
+		 	        where terminalid = #{terminalid}  
+		 	          and productid = #{productid}
+		]]>
+	</select>
+	
+	<select id="findPauseProductRestday" parameterType="Userproduct"  resultType="Userproduct" >
+		<![CDATA[
+		 	select userid,terminalid,productid,sum(restday) as restday,
+		 	       max(productname) as productname,
+		 	       min(price) as price,
+		 	       max(serverid) as serverid
+		 	  from userproduct 
+		 ]]>
+		 <where>
+			<include refid="whereColumns"/>
+		 </where>
+		 <![CDATA[
+		   group by userid,terminalid,productid
+		]]>
+	</select>
+	
+	<delete id="deletePauseProduct_batch" parameterType="Integer">
+		<![CDATA[
+			delete from userproduct 
+		]]>
+		<where>
+			<include refid="whereColumns"/>
+		</where>
+	</delete>
+	
+	
+	<!--批量删除无效的到期的产品 -->
+	<delete id="deleteInvalidProduct" parameterType="Integer">
+		<![CDATA[
+			delete from userproduct where endtime < now() and state = '1'
+		]]>
+		<if test="userid != null and userid != ''">
+			<![CDATA[
+				and userid = #{userid}
+			]]>
+		</if>
+		<if test="cardid != null and cardid != ''">
+			<![CDATA[
+				and cardid = #{cardid}
+			]]>
+		</if>
+		<if test="terminalid != null and terminalid != ''">
+			<![CDATA[
+				and terminalid = #{terminalid}
+			]]>
+		</if>
+		<if test="productid != null and productid != ''">
+			<![CDATA[
+				and productid = #{productid}
+			]]>
+		</if>
+	</delete>
+	
+	<select id="findByIdBatch" parameterType="java.util.List"  resultType="Userproduct" >
+		<![CDATA[
+		 	select * from userproduct where id in 
+		]]>
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">  
+		 #{item}  
+		</foreach> 
+	</select>
+</mapper>

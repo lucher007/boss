@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+    http://www.springframework.org/schema/aop 
+    http://www.springframework.org/schema/aop/spring-aop-4.0.xsd 
+    http://www.springframework.org/schema/tx  
+    http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+    http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<!-- 配置要扫描的包 -->
+	<context:component-scan base-package="com.gospell.boss" />
+
+	<!-- 配置国际化资源文件 -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="messages" />
+		<property name="useCodeAsDefaultMessage" value="true" />
+		<property name="defaultEncoding" value="UTF-8"/>
+	</bean>
+
+	<!-- 加载JDBC资源文件信息 -->
+	<context:property-placeholder order="1"
+		location="classpath:jdbc.properties" />
+
+	<!-- 获取数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<!-- 指定连接数据库的驱动 -->
+		<property name="driverClass" value="${driverClass}" />
+		<!-- 指定连接数据库的URL -->
+		<property name="jdbcUrl"
+			value="jdbc:mysql://${databaseIp}:${databasePort}/${databaseName}?useUnicode=true&amp;characterEncoding=utf-8" />
+		<!-- 指定连接数据库的用户名 -->
+		<property name="user" value="${user}" />
+		<!-- 指定连接数据库的密码 -->
+		<property name="password" value="${password}" />
+		<!-- 初始化时获取的连接数，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+		<property name="initialPoolSize" value="${initialPoolSize}" />
+		<!-- 连接池中保留的最小连接数 -->
+		<property name="minPoolSize" value="${minPoolSize}" />
+		<!-- 连接池中保留的最大连接数。Default: 15 -->
+		<property name="maxPoolSize" value="${maxPoolSize}" />
+		<!-- 最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+		<!-- <property name="maxIdleTime" value="${maxIdleTime}"/> -->
+		<!--获得连接的最大等待毫秒数。Default: 1000 -->
+		<property name="acquireRetryDelay" value="${acquireRetryDelay}" />
+		<!-- 当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->
+		<!-- <property name="acquireIncrement" value="${acquireIncrement}"/> -->
+		<!-- 每60秒检查所有连接池中的空闲连接。Default: 0 -->
+		<!-- <property name="idleConnectionTestPeriod" value="${idleConnectionTestPeriod}"/> -->
+		<!-- 获取连接失败后该数据源将申明已断开并永久关闭。Default: false -->
+		<property name="breakAfterAcquireFailure" value="${breakAfterAcquireFailure}" />
+	</bean>
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+		p:dataSource-ref="dataSource" p:configLocation="classpath:myBatisConfig.xml"
+		p:mapperLocations="classpath:com/gospell/boss/mybatis/xml/*.xml"
+		p:typeAliasesPackage="com.gospell.boss.po" />
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.gospell.boss.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+
+</beans>

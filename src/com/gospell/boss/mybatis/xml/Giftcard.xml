@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IGiftcardDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="querygiftcardno != null and querygiftcardno != ''">
+			<![CDATA[
+				and giftcardno = #{querygiftcardno}
+			]]>
+		</if>
+		<if test="querybatchno != null and querybatchno != ''">
+			<![CDATA[
+				and batchno = #{querybatchno}
+			]]>
+		</if>
+		<if test="querystate != null and querystate != ''">
+			<![CDATA[
+				and state = #{querystate}
+			]]>
+		</if>
+		<if test="queryusedflag != null and queryusedflag != ''">
+			<![CDATA[
+				and usedflag = #{queryusedflag}
+			]]>
+		</if>
+		<if test="queryamountpara != null and queryamountpara != ''">
+			<![CDATA[
+				and amountpara = #{queryamountpara}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Giftcard" resultType="Giftcard">
+		<![CDATA[
+			select * from giftcard 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by batchno desc,amount desc,serialno desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByCount" parameterType="Giftcard" resultType="Integer">
+		<![CDATA[
+			select count(1) from giftcard 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Giftcard" resultType="Giftcard">
+		<![CDATA[
+			select * from giftcard 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by batchno desc,amount desc,serialno desc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Giftcard" >
+		<![CDATA[
+		 	select * from giftcard
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByGiftcardnoStr" parameterType="String" resultType="Giftcard">
+		<![CDATA[
+		 	select * from giftcard where giftcardno = #{giftcardno}
+		]]>
+	</select>
+	
+	<insert id="save" parameterType="Giftcard">
+		<![CDATA[
+			insert into giftcard (giftcardno,password,batchno,serialno,amount,amountpara,price,state,printflag,usedflag,addtime,remark)
+			   values (#{giftcardno},#{password},#{batchno},#{serialno},#{amount},#{amountpara},#{price},#{state},#{printflag},#{usedflag},#{addtime},#{remark})				
+		]]>	
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Giftcard">
+		<![CDATA[
+			update giftcard set giftcardno=#{giftcardno},password=#{password},batchno=#{batchno},serialno=#{serialno},amount=#{amount},amountpara=#{amountpara},
+			                    price=#{price},state=#{state},printflag=#{printflag},usedflag=#{usedflag},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from giftcard where id=#{id}
+		]]>		
+	</delete>
+	
+	<select id="findMaxSerialno" parameterType="Giftcard" resultType="String" >
+		<![CDATA[
+		 	select max(serialno) from giftcard  where batchno = #{batchno} and amountpara = #{amountpara}
+		]]>
+	</select>
+	
+	<insert id="saveBatch" parameterType="java.util.List">
+       <![CDATA[
+       insert into giftcard (giftcardno,password,batchno,serialno,amount,amountpara,price,state,printflag,usedflag,addtime,remark)
+        VALUES
+        ]]>	
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.giftcardno},
+            #{item.password},         
+            #{item.batchno},
+            #{item.serialno},
+            #{item.amount},
+            #{item.amountpara},
+            #{item.price},
+            #{item.state},
+            #{item.printflag},
+            #{item.usedflag},
+            #{item.addtime},
+            #{item.remark}
+            )
+        </foreach>
+    </insert>
+	
+</mapper>

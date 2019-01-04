@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.ICaspnblackstbDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+		<if test="querystbno != null and querystbno != ''">
+			<![CDATA[
+				and stbno like concat('%',#{querystbno},'%')
+			]]>
+		</if>
+		
+		<if test="querydate != null and querydate != ''">
+			<![CDATA[
+				and addtime like concat(#{querydate},'%')
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Caspnblackstb" resultType="Caspnblackstb">
+		<![CDATA[
+			select * from caspnblackstb 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+
+	<select id="findByCount" parameterType="Caspnblackstb" resultType="Integer">
+		<![CDATA[
+			select count(1) from caspnblackstb 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Caspnblackstb" resultType="Caspnblackstb">
+		<![CDATA[
+			select * from caspnblackstb 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Caspnblackstb" >
+		<![CDATA[
+		 	select * from caspnblackstb
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="Caspnblackstb">
+		<![CDATA[
+			insert into caspnblackstb (stbno,remark,cardids,netid,versiontype,addressingmode,conditioncount,conditioncontent,expired_Time,addtime,send_now_flag)
+			   					values (#{stbno},#{remark},#{cardids},#{netid},#{versiontype},#{addressingmode},#{conditioncount},#{conditioncontent},#{expired_Time},#{addtime},#{send_now_flag})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Caspnblackstb">
+		<![CDATA[
+			update caspnblackstb set stbno=#{stbno},remark=#{remark},cardids=#{cardids},netid=#{netid},versiontype=#{versiontype},addressingmode=#{addressingmode},
+			         conditioncount=#{conditioncount},conditioncontent=#{conditioncontent},expired_Time=#{expired_Time},addtime=#{addtime},send_now_flag=#{send_now_flag}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from caspnblackstb where id=#{id}
+		]]>		
+	</delete>
+	
+</mapper>

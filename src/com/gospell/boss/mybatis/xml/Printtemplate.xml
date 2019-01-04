@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IPrinttemplateDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+
+	<sql id="whereColumns">
+
+		<if test="querycode != null and querycode != ''">
+			<![CDATA[
+				and code like concat('%',#{querycode},'%')
+			]]>
+		</if>
+
+		<if test="queryname != null and queryname != ''">
+			<![CDATA[
+				and name like concat('%',#{queryname},'%')
+			]]>
+		</if>
+
+	</sql>
+
+	<select id="findByList" parameterType="Printtemplate"
+		resultType="Printtemplate">
+		<![CDATA[
+			select * from printtemplate 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>
+	</select>
+
+	<select id="findByCount" parameterType="Printtemplate"
+		resultType="Integer">
+		<![CDATA[
+			select count(1) from printtemplate 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+	</select>
+	
+	<select id="findByCode" parameterType="String" resultType="Printtemplate">
+		<![CDATA[
+			select * from printtemplate where code= #{code}
+		]]>
+	</select>
+	
+	<select id="findByName" parameterType="String" resultType="Printtemplate">
+		<![CDATA[
+			select * from printtemplate where name= #{name}
+		]]>
+	</select>
+	
+		<select id="findById" parameterType="Integer" resultType="Printtemplate">
+		<![CDATA[
+		 	select * from printtemplate
+		]]>
+		<where>
+			<include refid="idColumns" />
+		</where>
+	</select>
+
+	<select id="queryByList" parameterType="Printtemplate"
+		resultType="Printtemplate">
+		<![CDATA[
+			select * from printtemplate 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>
+	</select>
+
+	 <select id="queryPrintpara" resultType="Printpara">
+		<![CDATA[
+			select * from printpara where state = '1' order by id asc
+		]]>
+	</select>
+
+
+
+
+	<insert id="save" parameterType="Printtemplate">
+		<![CDATA[
+			insert into printtemplate(code,name,value,addtime,remark) values (#{code},#{name},#{value},#{addtime},#{remark})				
+		]]>
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+
+	<update id="update" parameterType="Printtemplate">
+		<![CDATA[
+			update printtemplate set code=#{code},name=#{name},value=#{value},addtime=#{addtime},remark=#{remark}
+		]]>
+		<where>
+			<include refid="idColumns" />
+		</where>
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from printtemplate where id=#{id}
+		]]>
+	</delete>
+
+
+</mapper>

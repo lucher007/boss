@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IUserlevelproductDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    
+	    <if test="userlevelid != null and userlevelid != ''">
+			<![CDATA[
+				and userlevelid = #{userlevelid}
+			]]>
+		</if>
+		<if test="productid != null and productid != ''">
+			<![CDATA[
+				and productid = #{productid}
+			]]>
+		</if>
+		
+	</sql>
+	
+	<select id="findByList" parameterType="Userlevelproduct" resultType="Userlevelproduct">
+		<![CDATA[
+			select * from userlevelproduct 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByCount" parameterType="Userlevelproduct" resultType="Integer">
+		<![CDATA[
+			select count(1) from userlevelproduct 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Userlevelproduct" resultType="Userlevelproduct">
+		<![CDATA[
+			select * from userlevelproduct 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Userlevelproduct" >
+		<![CDATA[
+		 	select * from userlevelproduct
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByUserlevelid" parameterType="String" resultType="Userlevelproduct">
+		<![CDATA[
+		 	select * from userlevelproduct where userlevelid = #{userlevelid}
+		]]>
+	</select>
+	
+	<select id="findByProductid" parameterType="String" resultType="Userlevelproduct">
+		<![CDATA[
+		 	select * from userlevelproduct where productid = #{productid}
+		]]>
+	</select>
+	
+	<select id="findByProductidAndUserlevelid" parameterType="Userlevelproduct" resultType="Userlevelproduct">
+		<![CDATA[
+		 	select * from userlevelproduct where productid = #{productid} and userlevelid = #{userlevelid}
+		]]>
+	</select>
+	
+	<insert id="save" parameterType="Userlevelproduct">
+		<![CDATA[
+			insert into userlevelproduct (userlevelid,netid,productid,pricepermonth,priceperday,subpricepermonth,subpriceperday,remark)
+			   values (#{userlevelid},#{netid},#{productid},#{pricepermonth},#{priceperday},#{subpricepermonth},#{subpriceperday},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Userlevelproduct">
+		<![CDATA[
+			update userlevelproduct set userlevelid=#{userlevelid},netid=#{netid},productid=#{productid},pricepermonth=#{pricepermonth},priceperday=#{priceperday},subpricepermonth=#{subpricepermonth},subpriceperday=#{subpriceperday},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from userlevelproduct where id=#{id}
+		]]>		
+	</delete>
+	
+	<delete id="deleteByUserlevelid" parameterType="Integer">
+		<![CDATA[
+			delete from userlevelproduct where userlevelid = #{userlevelid}
+		]]>		
+	</delete>
+	
+	<delete id="deleteByProductid" parameterType="String">
+		<![CDATA[
+			delete from userlevelproduct where productid = #{productid}
+		]]>		
+	</delete>
+	
+    <insert id="saveBatch" parameterType="java.util.List">
+       <![CDATA[
+        INSERT IGNORE INTO userlevelproduct (userlevelid,netid,productid,pricepermonth,priceperday,subpricepermonth,subpriceperday,remark)	
+        VALUES
+        ]]>	
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.userlevelid},
+            #{item.netid},         
+            #{item.productid},         
+            #{item.pricepermonth},
+            #{item.priceperday},
+            #{item.subpricepermonth},
+            #{item.subpriceperday},
+            #{item.remark}
+            )
+        </foreach>
+    </insert>
+	
+	<!-- 有效产品 -->
+	<select id="queryeffectiveproduct" parameterType="Userlevelproduct" resultType="Userlevelproduct">
+		<![CDATA[
+		 	select up.productid,up.pricepermonth,up.priceperday,up.subpriceperday,up.subpricepermonth,up.netid,productname,state
+		 	  from userlevelproduct up, product p
+			 where up.productid = p.productid and up.netid = p.netid
+			   and p.state = '1'
+			   and up.netid = #{netid}
+			   and userlevelid = #{userlevelid}
+		]]>
+		<if test="queryproductid != null and queryproductid != ''">
+	  		<![CDATA[
+				and up.productid = #{queryproductid}
+	        ]]>
+        </if>
+        <if test="queryproductname != null and queryproductname != ''">
+	  		<![CDATA[
+				and p.productname like concat('%',#{queryproductname},'%')
+	        ]]>
+        </if>
+        <![CDATA[
+		  order by up.productid asc limit #{pager_offset},#{pager_openset}
+		]]>
+	</select>
+	
+	<select id="findeffectiveproduct" parameterType="Userlevelproduct" resultType="Userlevelproduct">
+		<![CDATA[
+		 	select up.productid,up.pricepermonth,up.priceperday,up.subpriceperday,up.subpricepermonth,up.netid,productname,state
+		 	  from userlevelproduct up, product p
+			 where up.productid = p.productid and up.netid = p.netid
+			   and p.state = '1'
+			   and up.netid = #{netid}
+			   and userlevelid = #{userlevelid}
+		]]>
+		<if test="queryproductid != null and queryproductid != ''">
+	  		<![CDATA[
+				and up.productid = #{queryproductid}
+	        ]]>
+        </if>
+	</select>
+	
+	<select id="findeffectiveproductCount" parameterType="Userlevelproduct" resultType="Integer">
+		<![CDATA[
+		 	select count(1) from userlevelproduct up, product p
+			 where up.productid = p.productid and up.netid = p.netid
+			   and p.state = '1'
+			   and p.netid = #{netid}
+			   and userlevelid = #{userlevelid}
+		]]>
+		<if test="queryproductid != null and queryproductid != ''">
+	  		<![CDATA[
+				and up.productid = #{queryproductid}
+	        ]]>
+        </if>
+        <if test="queryproductname != null and queryproductname != ''">
+	  		<![CDATA[
+				and p.productname like concat('%',#{queryproductname},'%')
+	        ]]>
+        </if>
+	</select>
+	
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IServiceDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+		<if test="queryservicename != null and queryservicename != ''">
+			<![CDATA[
+				and servicename like concat('%',#{queryservicename},'%')
+			]]>
+		</if>
+		<if test="queryserviceid != null and queryserviceid != ''">
+			<![CDATA[
+				and serviceid = #{queryserviceid}
+			]]>
+		</if>
+		<if test="querystate != null and querystate != ''">
+			<![CDATA[
+				and state = #{querystate}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Service" resultType="Service">
+		<![CDATA[
+			select * from service 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<if test ="pager_offset !=null and pager_openset != null and pager_openset!=0">
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>
+		</if>
+	</select>
+	
+	<select id="findByCount" parameterType="Service" resultType="Integer">
+		<![CDATA[
+			select count(1) from service 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Service" resultType="Service">
+		<![CDATA[
+			select * from service 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Service" >
+		<![CDATA[
+		 	select * from service
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByServiceid" parameterType="Service" resultType="Service">
+		<![CDATA[
+		 	select * from service where netid = #{netid} and serviceid = #{serviceid}
+		]]>
+	</select>
+	
+	<insert id="save" parameterType="Service">
+		<![CDATA[
+			insert into service (netid,serviceid,servicename,servicetype,chargetype,pricepermonth,priceperday,extendflag,state,subpricepermonth,subpriceperday,remark)
+			   values (#{netid},#{serviceid},#{servicename},#{servicetype},#{chargetype},#{pricepermonth},#{priceperday},#{extendflag},#{state},#{subpricepermonth},#{subpriceperday},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Service">
+		<![CDATA[
+			update service set netid=#{netid},serviceid=#{serviceid},servicename=#{servicename},
+			                   servicetype=#{servicetype},chargetype=#{chargetype},pricepermonth=#{pricepermonth},priceperday=#{priceperday},
+			                   extendflag=#{extendflag},state=#{state},subpricepermonth=#{subpricepermonth},subpriceperday=#{subpriceperday},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+
+		<insert id="saveBatch" parameterType="java.util.List">
+       <![CDATA[
+        INSERT IGNORE INTO service (netid,serviceid,servicename,servicetype,chargetype,pricepermonth,priceperday,unit,extendflag,state,subpricepermonth,subpriceperday,remark)	
+        VALUES
+        ]]>	
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.netid},
+            #{item.serviceid},         
+            #{item.servicename},
+            #{item.servicetype},
+            #{item.chargetype},
+            #{item.pricepermonth},
+            #{item.priceperday},
+            #{item.unit},
+            #{item.extendflag},
+            #{item.state},
+            #{item.subpricepermonth},
+            #{item.subpriceperday},
+            #{item.remark}
+            )
+        </foreach>
+    </insert>
+	
+	
+	<delete id="emptyTable">
+		<![CDATA[
+			delete from service
+		]]>		
+	</delete>
+
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from service where id=#{id}
+		]]>		
+	</delete>
+	
+	<delete id="deleteByNetid" parameterType="Integer">
+		<![CDATA[
+			delete from service where netid=#{netid}
+		]]>		
+	</delete>
+	
+	<update id="activeService" parameterType="Service">
+		<![CDATA[
+			update service set state = #{state}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+</mapper>

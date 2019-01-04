@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IRolemenurefDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">
+	</sql>
+
+
+	<select id="findByList" parameterType="Rolemenuref" resultType="Rolemenuref">
+		<![CDATA[
+			select * from rolemenuref 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>
+	</select>
+
+	<select id="findByCount" parameterType="Rolemenuref" resultType="Integer">
+		<![CDATA[
+			select count(1) from rolemenuref 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+	</select>
+
+	<select id="queryByList" parameterType="Rolemenuref" resultType="Rolemenuref">
+		<![CDATA[
+			select * from rolemenuref 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>
+	</select>
+
+	<select id="findByRoleid" parameterType="Integer" resultType="Rolemenuref">
+		<![CDATA[
+		 	select * from rolemenuref where  roleid = #{roleid}
+		]]>
+	</select>
+
+	<select id="findById" parameterType="Integer" resultType="Rolemenuref">
+		<![CDATA[
+		 	select * from rolemenuref
+		]]>
+		<where>
+			<include refid="idColumns" />
+		</where>
+	</select>
+
+	<insert id="save" parameterType="Rolemenuref">
+		<![CDATA[
+			insert into rolemenuref (roleid,meunuid,remark) values (#{roleid},#{meunuid},#{remark})				
+		]]>
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+
+	<update id="update" parameterType="Rolemenuref">
+		<![CDATA[
+			update rolemenuref set roleid=#{roleid},meunuid=#{meunuid},remark=#{remark}
+		]]>
+		<where>
+			<include refid="idColumns" />
+		</where>
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from rolemenuref where id=#{id}
+		]]>
+	</delete>
+
+
+	<delete id="deleteByRoleid" parameterType="Integer">
+		<![CDATA[
+			delete from rolemenuref where roleid=#{roleid}
+		]]>
+	</delete>
+
+
+
+	<insert id="saveBatch" parameterType="java.util.List">
+       <![CDATA[
+        INSERT IGNORE INTO rolemenuref (roleid,meunuid,remark)	
+        VALUES
+        ]]>
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(
+			#{item.roleid},
+			#{item.meunuid},
+			#{item.remark}
+			)
+		</foreach>
+	</insert>
+
+
+
+</mapper>

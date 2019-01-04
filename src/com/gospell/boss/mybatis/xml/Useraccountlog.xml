@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IUseraccountlogDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+		<if test="querytype != null and querytype != ''">
+			<![CDATA[
+				and type = #{querytype}
+			]]>
+		</if>
+		<if test="userid != null and userid != ''">
+			<![CDATA[
+				and userid = #{userid}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Useraccountlog" resultType="Useraccountlog">
+		<![CDATA[
+			select * from useraccountlog 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByCount" parameterType="Useraccountlog" resultType="Integer">
+		<![CDATA[
+			select count(1) from useraccountlog 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Useraccountlog" resultType="Useraccountlog">
+		<![CDATA[
+			select * from useraccountlog 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Useraccountlog" >
+		<![CDATA[
+		 	select * from useraccountlog
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="Useraccountlog">
+		<![CDATA[
+			insert into useraccountlog (netid,userid,type,money,operatorid,addtime,source,businesstypekey,remark)
+			   values (#{netid},#{userid},#{type},#{money},#{operatorid},#{addtime},#{source},#{businesstypekey},#{remark})				
+		]]>	
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Useraccountlog">
+		<![CDATA[
+			update useraccountlog set netid=#{netid},userid=#{userid},type=#{type},
+			       money=#{money},operatorid=#{operatorid},source=#{source},businesstypekey=#{businesstypekey},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from useraccountlog where id=#{id}
+		]]>		
+	</delete>
+	
+	
+	<select id="findByUserid" parameterType="Integer"  resultType="Useraccountlog" >
+		<![CDATA[
+		 	select * from useraccountlog where userid = #{userid} order by id desc
+		]]>
+	</select>
+	
+</mapper>

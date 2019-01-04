@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IAuthorizeDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">
+		<if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+		<if test="queryversiontype != null and queryversiontype != ''">
+			<![CDATA[
+				and versiontype = #{queryversiontype}
+			]]>
+		</if>
+		<if test="querystate != null and querystate != ''">
+			<![CDATA[
+				and state = #{querystate}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Authorize" resultType="Authorize">
+		<![CDATA[
+			select * from authorize 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+
+	<select id="findByCount" parameterType="Authorize" resultType="Integer">
+		<![CDATA[
+			select count(1) from authorize 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+    
+    <select id="queryByList" parameterType="Authorize" resultType="Authorize">
+		<![CDATA[
+			select * from authorize 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+    
+    <insert id="save" parameterType="Authorize">
+		<![CDATA[
+			insert into authorize(netid,serverid,areacode,userid,versiontype,terminalid,terminaltype,cardid,stbno,commandtype,state,result,conditionaddr,command,addtime,remark) 
+			values (#{netid},#{serverid},#{areacode},#{userid},#{versiontype},#{terminalid},#{terminaltype},#{cardid},#{stbno},#{commandtype},#{state},#{result},#{conditionaddr},#{command},#{addtime},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Authorize">
+		<![CDATA[
+			update authorize set netid=#{netid},serverid=#{serverid},areacode=#{areacode},userid=#{userid},versiontype=#{versiontype},terminalid=#{terminalid},terminaltype=#{terminaltype},cardid=#{cardid},
+			stbno=#{stbno},commandtype=#{commandtype},state=#{state},result=#{result},conditionaddr=#{conditionaddr},command=#{command},addtime=#{addtime},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from authorize where id=#{id}
+		]]>		
+	</delete>
+    
+    
+    <insert id="saveBatch" parameterType="java.util.List">
+       <![CDATA[
+        insert IGNORE into authorize(netid,serverid,areacode,userid,versiontype,terminalid,terminaltype,cardid,stbno,commandtype,state,result,conditionaddr,command,addtime,remark) 
+        VALUES
+        ]]>	
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.netid},
+            #{item.serverid},
+            #{item.areacode},
+            #{item.userid},
+            #{item.versiontype},
+            #{item.terminalid},
+            #{item.terminaltype},
+            #{item.cardid},
+            #{item.stbno},
+            #{item.commandtype},
+            #{item.state},
+            #{item.result},
+            #{item.conditionaddr},
+            #{item.command},
+            #{item.addtime},
+            #{item.remark}
+            )
+        </foreach>
+    </insert>
+</mapper>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IProductservicerefDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+		<if test="queryproductid != null and queryproductid != ''">
+			<![CDATA[
+				and productid = #{queryproductid}
+			]]>
+		</if>
+		<if test="queryserviceid != null and queryserviceid != ''">
+			<![CDATA[
+				and serviceid = #{queryserviceid}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Productserviceref" resultType="Productserviceref">
+		<![CDATA[
+			select * from productserviceref 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByCount" parameterType="Productserviceref" resultType="Integer">
+		<![CDATA[
+			select count(1) from productserviceref 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Productserviceref" resultType="Productserviceref">
+		<![CDATA[
+			select * from productserviceref 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Productserviceref" >
+		<![CDATA[
+		 	select * from productserviceref
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByProductid" parameterType="Productserviceref" resultType="Productserviceref">
+		<![CDATA[
+		 	select * from productserviceref where netid =#{netid} and productid = #{productid}
+		]]>
+	</select>
+	
+	<select id="findByServiceid" parameterType="Productserviceref" resultType="Productserviceref">
+		<![CDATA[
+		 	select * from productserviceref where netid =#{netid} and serviceid = #{serviceid}
+		]]>
+	</select>
+	
+	<insert id="save" parameterType="Productserviceref">
+		<![CDATA[
+			insert into productserviceref (netid,productid,serviceid,remark)
+			   values (#{netid},#{productid},#{serviceid},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Productserviceref">
+		<![CDATA[
+			update productserviceref set netid=#{netid},productid=#{productid},serviceid=#{serviceid},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from productserviceref where id=#{id}
+		]]>		
+	</delete>
+	
+	<delete id="deleteByProductid" parameterType="Productserviceref">
+		<![CDATA[
+			delete from productserviceref where netid =#{netid} and productid = #{productid}
+		]]>		
+	</delete>
+	
+	<delete id="deleteByNetid" parameterType="Integer">
+		<![CDATA[
+			delete from productserviceref where netid =#{netid}
+		]]>		
+	</delete>
+	
+	<delete id="deleteByServiceid" parameterType="Productserviceref">
+		<![CDATA[
+			delete from productserviceref where netid =#{netid} and serviceid = #{serviceid}
+		]]>		
+	</delete>
+	
+	
+    <insert id="saveBatch" parameterType="java.util.List">
+       <![CDATA[
+        INSERT IGNORE INTO productserviceref (netid,productid,serviceid,remark)	
+        VALUES
+        ]]>	
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.netid},
+            #{item.productid},         
+            #{item.serviceid},
+            #{item.remark}
+            )
+        </foreach>
+    </insert>
+	
+	
+</mapper>

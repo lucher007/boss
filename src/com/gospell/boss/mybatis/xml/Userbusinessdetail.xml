@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IUserbusinessdetailDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+		<if test="operatorid != null and operatorid != ''">
+			<![CDATA[
+				and operatorid = #{operatorid}
+			]]>
+		</if>
+		
+		<if test="querydate != null and querydate != ''">
+		<![CDATA[
+				and addtime LIKE concat('%',#{querydate},'%')	
+			]]>
+		</if>
+		
+		<if test="querylogout != null and querylogout != ''">
+			<![CDATA[
+				and logout = #{querylogout}
+			]]>
+		</if>
+		<if test="querysource != null and querysource != ''">
+			<![CDATA[
+				and source = #{querysource}
+			]]>
+		</if>
+		<if test="userid != null and userid != ''">
+			<![CDATA[
+				and userid = #{userid}
+			]]>
+		</if>
+		<if test="businessid != null and businessid != ''">
+			<![CDATA[
+				and businessid = #{businessid}
+			]]>
+		</if>
+		<if test="businesstypekey != null and businesstypekey != ''">
+			<![CDATA[
+				and businesstypekey = #{businesstypekey}
+			]]>
+		</if>
+		
+	</sql>
+	
+	<select id="findByList" parameterType="Userbusinessdetail" resultType="Userbusinessdetail">
+		<![CDATA[
+			select * from userbusinessdetail 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByCount" parameterType="Userbusinessdetail" resultType="Integer">
+		<![CDATA[
+			select count(1) from userbusinessdetail 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Userbusinessdetail" resultType="Userbusinessdetail">
+		<![CDATA[
+			select * from userbusinessdetail 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Userbusinessdetail" >
+		<![CDATA[
+		 	select * from userbusinessdetail
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByUserid" parameterType="Integer"  resultType="Userbusinessdetail" >
+		<![CDATA[
+		 	select * from userbusinessdetail where userid = #{userid}
+		]]>
+	</select>
+	
+	
+	
+	<select id="findByBusinessid" parameterType="Integer"  resultType="Userbusinessdetail" >
+		<![CDATA[
+		 	select * from userbusinessdetail where businessid = #{businessid}
+		]]>
+	</select>
+	
+	
+	
+	<insert id="save" parameterType="Userbusinessdetail">
+		<![CDATA[
+			insert into userbusinessdetail (netid,businessid,operatorid,areacode,userid,storeid,businesstypekey,businesstypename,
+			             terminalid,terminaltype,cardid,stbno,productid,productname,type,addtime,starttime,endtime,
+			             feename,content,price,totalmoney,logout,source,buyerid,remark)
+			 values (#{netid},#{businessid},#{operatorid},#{areacode},#{userid},#{storeid},#{businesstypekey},#{businesstypename},
+			 		 #{terminalid},#{terminaltype},#{cardid},#{stbno},#{productid},#{productname},#{type},#{addtime},#{starttime},#{endtime},
+			 		 #{feename},#{content},#{price},#{totalmoney},#{logout},#{source},#{buyerid},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Userbusinessdetail">
+		<![CDATA[
+			update userbusinessdetail set netid=#{netid},businessid=#{businessid},operatorid=#{operatorid},areacode=#{areacode},userid=#{userid},
+			               storeid=#{storeid},businesstypekey=#{businesstypekey},businesstypename=#{businesstypename},
+			               terminalid=#{terminalid},terminaltype=#{terminaltype},cardid=#{cardid},stbno=#{stbno},productid=#{productid},productname=#{productname},type=#{type},
+			               addtime=#{addtime},starttime=#{starttime},endtime=#{endtime},feename=#{feename},content=#{content},
+			               price=#{price},totalmoney=#{totalmoney},logout=#{logout},source=#{source},buyerid=#{buyerid},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from userbusinessdetail where id=#{id}
+		]]>		
+	</delete>
+	
+	
+	<select id="findOperatorReport" parameterType="BusinessReport" resultType="BusinessReport">
+  		<![CDATA[
+			SELECT businesstypekey, sum(totalmoney) as totalprice,count(businesstypekey) as count 
+			FROM userbusinessdetail where businesstypekey <> 'transferusered'
+			 
+		]]>
+		<if test="operatorid != null and operatorid != ''">
+	  		<![CDATA[
+				and operatorid = #{operatorid}
+	        ]]>	  
+        </if>
+		<if test="querydate != null and querydate != ''">
+			<![CDATA[
+				and addtime LIKE concat('%',#{querydate},'%')	
+			]]>
+		</if>
+		<![CDATA[
+			GROUP BY businesstypekey
+		]]>
+		
+		<![CDATA[
+		 	order by totalprice desc
+		]]>	
+	
+    </select>
+    
+    <select id="findStoreReport" parameterType="BusinessReport" resultType="BusinessReport">
+  		<![CDATA[
+			SELECT businesstypekey, sum(totalmoney) as totalprice,count(businesstypekey) as count FROM userbusinessdetail 
+		]]>
+  		<trim prefix="where" prefixOverrides="and|or">
+			storeid = #{storeid}  
+		<if test="querydate != null and querydate != ''">
+		<![CDATA[
+				and addtime LIKE concat('%',#{querydate},'%')	
+			]]>
+			</if>
+			<![CDATA[
+				GROUP BY businesstypekey
+			]]>
+			
+			<![CDATA[
+		 	order by totalprice desc
+		]]>	
+		</trim>
+    </select>
+    
+    <select id="findOperationByOperatorid" parameterType="Userbusinessdetail" resultType="Userbusinessdetail">
+  		<![CDATA[
+			select * FROM userbusinessdetail 
+		]]>
+  		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>	
+			<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>	
+    </select>
+ 
+	
+	
+	
+</mapper>

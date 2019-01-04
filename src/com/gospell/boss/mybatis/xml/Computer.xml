@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IComputerDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="querystoreid != null and querystoreid != ''">
+			<![CDATA[
+				and storeid = #{querystoreid}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Computer" resultType="Computer">
+		<![CDATA[
+			select * from computer 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+
+	<select id="findByCount" parameterType="Computer" resultType="Integer">
+		<![CDATA[
+			select count(1) from computer 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Computer" resultType="Computer">
+		<![CDATA[
+			select * from computer 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Computer" >
+		<![CDATA[
+		 	select * from computer
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="Computer">
+		<![CDATA[
+			insert into computer (netid,storeid,computercode,ip,macaddress,remark)
+			   values (#{netid},#{storeid},#{computercode},#{ip},#{macaddress},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Computer">
+		<![CDATA[
+			update computer set netid=#{netid},storeid=#{storeid},computercode=#{computercode},
+			                    ip=#{ip},macaddress=#{macaddress},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from computer where id=#{id}
+		]]>		
+	</delete>
+	
+	<select id="findByMacaddress" parameterType="Computer" resultType="Computer">
+		<![CDATA[
+		 	select * from computer where macaddress = #{macaddress}
+		]]>
+	</select>
+	
+</mapper>

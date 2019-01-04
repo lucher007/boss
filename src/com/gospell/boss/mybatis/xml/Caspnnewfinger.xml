@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.ICaspnnewfingerDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+		<if test="cardid != null and cardid != ''">
+			<![CDATA[
+				and cardid like concat('%',#{cardid},'%')
+			]]>
+		</if>
+		
+		<if test="querydate != null and querydate != ''">
+			<![CDATA[
+				and addtime like concat(#{querydate},'%')
+			]]>
+		</if>
+		<if test="queryversiontype != null and queryversiontype != ''">
+			<![CDATA[
+				and versiontype =#{queryversiontype}
+			]]>
+		</if>
+		<if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid =#{querynetid}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Caspnnewfinger" resultType="Caspnnewfinger">
+		<![CDATA[
+			select * from caspnnewfinger 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+
+	<select id="findByCount" parameterType="Caspnnewfinger" resultType="Integer">
+		<![CDATA[
+			select count(1) from caspnnewfinger 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Caspnnewfinger" resultType="Caspnnewfinger">
+		<![CDATA[
+			select * from caspnnewfinger 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Caspnnewfinger" >
+		<![CDATA[
+		 	select * from caspnnewfinger
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="Caspnnewfinger">
+		<![CDATA[
+			insert into caspnnewfinger (netid,cardid,conditioncontent,expiredtime,reservedfutureuse,starttime,endtime,lockscreen,duration,intervaltime,showtimes,
+										fontsize,fontcolor,backgroundcolor,postype,posx,posy,channelids,showfreq,showtype,idtype,content,addtime,remark,
+										versiontype,stbno,addressingmode,conditioncount,foregroundcolor,foregroundtransparency,backgroundtransparency,
+										fingerheight,encryptflag,cardiddisplayflag,terminaliddisplayflag,operatoriddisplayflag,privatecontentflag,hideflag,ramdompositionflag,
+										fingerid,areaiddisplayflag,displayfrequency,displaydurationtime,layout
+										)
+										
+			   values (#{netid},#{cardid},#{conditioncontent},#{expiredtime},#{reservedfutureuse},#{starttime},#{endtime},#{lockscreen},#{duration},#{intervaltime},#{showtimes},
+			   		#{fontsize},#{fontcolor},#{backgroundcolor},#{postype},#{posx},#{posy},#{channelids},#{showfreq},#{showtype},#{idtype},#{content},#{addtime},#{remark},
+			   		#{versiontype},#{stbno},#{addressingmode},#{conditioncount},#{foregroundcolor},#{foregroundtransparency},#{backgroundtransparency},#{fingerheight},
+			   		#{encryptflag},#{cardiddisplayflag},#{terminaliddisplayflag},#{operatoriddisplayflag},#{privatecontentflag},#{hideflag},#{ramdompositionflag},
+			   		#{fingerid},#{areaiddisplayflag},#{displayfrequency},#{displaydurationtime},#{layout}
+			   		)				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Caspnnewfinger">
+		<![CDATA[
+			update caspnnewfinger set netid=#{netid},cardid=#{cardid},conditioncontent=#{conditioncontent},expiredtime=#{expiredtime},reservedfutureuse=#{reservedfutureuse},
+					starttime=#{starttime},endtime=#{endtime},lockscreen=#{lockscreen},duration=#{duration},intervaltime=#{intervaltime},showtimes=#{showtimes},fontsize=#{fontsize},
+					fontcolor=#{fontcolor},backgroundcolor=#{backgroundcolor},postype=#{postype},posx=#{posx},posy=#{posy},
+					channelids=#{channelids},showfreq=#{showfreq},showtype=#{showtype},idtype=#{idtype},content=#{content},addtime=#{addtime},remark=#{remark},
+					versiontype=#{versiontype},stbno=#{stbno},addressingmode=#{addressingmode},conditioncount=#{conditioncount},foregroundcolor=#{foregroundcolor},foregroundtransparency=#{foregroundtransparency},
+					backgroundtransparency=#{backgroundtransparency},fingerheight=#{fingerheight},encryptflag=#{encryptflag},cardiddisplayflag=#{cardiddisplayflag},
+					terminaliddisplayflag=#{terminaliddisplayflag},operatoriddisplayflag=#{operatoriddisplayflag},privatecontentflag=#{privatecontentflag},hideflag=#{hideflag},ramdompositionflag=#{ramdompositionflag},
+					fingerid=#{fingerid},areaiddisplayflag=#{areaiddisplayflag},displayfrequency=#{displayfrequency},displaydurationtime=#{displaydurationtime},layout=#{layout},fonttype=#{fonttype}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from caspnnewfinger where id=#{id}
+		]]>		
+	</delete>
+	
+</mapper>

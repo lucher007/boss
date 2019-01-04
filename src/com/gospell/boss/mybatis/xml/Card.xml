@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.ICardDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+		<if test="queryversiontype != null and queryversiontype != ''">
+			<![CDATA[
+				and versiontype = #{queryversiontype}
+			]]>
+		</if>
+		<if test="queryserverid != null and queryserverid != ''">
+			<![CDATA[
+				and serverid = #{queryserverid}
+			]]>
+		</if>
+	    <if test="queryproviderid != null and queryproviderid != ''">
+			<![CDATA[
+				and providerid = #{queryproviderid}
+			]]>
+		</if>
+		<if test="queryincardflag != null and queryincardflag != ''">
+			<![CDATA[
+				and incardflag = #{queryincardflag}
+			]]>
+		</if>
+		<if test="querycardid != null and querycardid != ''">
+			<![CDATA[
+				and cardid like concat('%',#{querycardid},'%')
+			]]>
+		</if>
+		<if test="querystbno != null and querystbno != ''">
+			<![CDATA[
+				and stbno like concat('%',#{querystbno},'%')
+			]]>
+		</if>
+		<if test="querystate != null and querystate != ''">
+			<![CDATA[
+				and state = #{querystate}
+			]]>
+		</if>
+		<if test="stbcardpair != null and stbcardpair != ''">
+			<![CDATA[
+				and stbno is null
+			]]>
+		</if>
+		<if test="startcardid != null and startcardid != ''">
+			<![CDATA[
+				and cardid >= #{startcardid}
+			]]>
+		</if>
+		<if test="endcardid != null and endcardid != ''">
+			<![CDATA[
+				and cardid <= #{endcardid}
+			]]>
+		</if>
+		<if test="querycardids != null and querycardids != ''">
+			<![CDATA[
+				and cardid in 	
+			]]>
+			<foreach item="item" index="index" collection="querycardids" open="(" separator="," close=")">  
+			 #{item}  
+			</foreach> 
+		</if>
+	</sql>
+	
+	<select id="findBatchCardByList" parameterType="Card" resultType="Card">
+		<![CDATA[
+			select card.id,cardid,providerid,netid,versiontype,serverid,state,incardflag,
+			       companyname,model,mainprice,subprice
+			  from card 
+	     left join provider on card.providerid = provider.id
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc
+		]]>		
+	</select>
+	
+	<select id="findByList" parameterType="Card" resultType="Card">
+		<![CDATA[
+			select * from card 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByCount" parameterType="Card" resultType="Integer">
+		<![CDATA[
+			select count(1) from card 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Card" resultType="Card">
+		<![CDATA[
+			select * from card 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Card" >
+		<![CDATA[
+		 	select * from card
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByCardid" parameterType="Card" resultType="Card">
+		<![CDATA[
+		 	select * from card where cardid = #{cardid}
+		]]>
+	</select>
+	
+	<select id="findByCardidStr" parameterType="String" resultType="Card">
+		<![CDATA[
+		 	select * from card where cardid = #{cardid}
+		]]>
+	</select>
+	
+	<insert id="save" parameterType="Card">
+		<![CDATA[
+			insert into card (cardid,providerid,netid,versiontype,serverid,state,inputtime,outtime,batchnum,
+			                   pincode,incardflag,stbno,remark)
+			          values (#{cardid},#{providerid},#{netid},#{versiontype},#{serverid},#{state},
+			                  #{inputtime},#{outtime},#{batchnum},#{pincode},#{incardflag},#{stbno},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<insert id="saveBatch" parameterType="java.util.List">
+       <![CDATA[
+        INSERT IGNORE INTO card (cardid,providerid,netid,versiontype,serverid,state,inputtime,outtime,batchnum,pincode,incardflag,stbno,remark)	
+        VALUES
+        ]]>	
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.cardid},
+            #{item.providerid},
+            #{item.netid},
+            #{item.versiontype},
+            #{item.serverid},
+            #{item.state},
+            #{item.inputtime},
+            #{item.outtime},
+            #{item.batchnum},
+            #{item.pincode},
+            #{item.incardflag},
+            #{item.stbno},
+            #{item.remark}
+            )
+        </foreach>
+    </insert>
+	
+	<update id="update" parameterType="Card">
+		<![CDATA[
+			update card set cardid=#{cardid},providerid=#{providerid},netid=#{netid},versiontype=#{versiontype},
+							serverid=#{serverid}, state=#{state},inputtime=#{inputtime},outtime=#{outtime},
+			                pincode=#{pincode},batchnum=#{batchnum},incardflag=#{incardflag},stbno=#{stbno},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from card where id=#{id}
+		]]>		
+	</delete>
+	
+	<update id="updateCardState" parameterType="Card">
+		<![CDATA[
+			update card set state=#{state} where cardid=#{cardid}
+		]]>	
+	</update>
+	
+	<update id="updateCardStateBatch" parameterType="Card">
+		<![CDATA[
+			update card set state=#{state} where cardid in (${cardid})
+		]]>	
+	</update>
+	
+	<update id="updateStbno" parameterType="Card">
+		<![CDATA[
+			update card set stbno=#{stbno} where cardid=#{cardid}
+		]]>	
+	</update>
+	
+	<select id="findByStbnoStr" parameterType="String" resultType="Card">
+		<![CDATA[
+		 	select * from card where stbno = #{stbno}
+		]]>
+	</select>
+	
+</mapper>

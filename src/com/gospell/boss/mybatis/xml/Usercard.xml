@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IUsercardDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="queryuserid != null and queryuserid != ''">
+			<![CDATA[
+				and userid = #{queryuserid}
+			]]>
+		</if>
+		<if test="querycardid != null and querycardid != ''">
+			<![CDATA[
+				and cardid like concat('%',#{querycardid},'%')
+			]]>
+		</if>
+		<if test="querystate != null and querystate != ''">
+			<![CDATA[
+				and state = #{querystate}
+			]]>
+		</if>
+		<if test="userid != null and userid != ''">
+			<![CDATA[
+				and userid = #{userid}
+			]]>
+		</if>
+		<if test="querynetid != null and querynetid != '' and querynetid != 'null' ">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+		<if test="queryserverid != null and queryserverid != ''">
+			<![CDATA[
+				and serverid = #{queryserverid}
+			]]>
+		</if>
+		<if test="queryareacode != null and queryareacode != '' and queryareacode != 'null'">
+			<![CDATA[
+				and areacode like concat(#{queryareacodevalid},'%')
+			]]>
+		</if>
+		<if test="cardids != null and cardids != ''">
+			<![CDATA[
+				and cardid in (${cardids})
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Usercard" resultType="Usercard">
+		<![CDATA[
+			select * from usercard 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByListForUserquery" parameterType="Usercard" resultType="Usercard">
+		<![CDATA[
+			select DISTINCT userid from usercard 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByUserid" parameterType="Integer" resultType="Usercard">
+		<![CDATA[
+			select * from usercard where userid = #{userid}
+		]]>
+	</select>
+	
+	
+	
+	<select id="findByCount" parameterType="Usercard" resultType="Integer">
+		<![CDATA[
+			select count(1) from usercard 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+		<select id="findByCountForUserquery" parameterType="Usercard" resultType="Integer">
+		<![CDATA[
+			select count(DISTINCT userid) from usercard 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Usercard" resultType="Usercard">
+		<![CDATA[
+			select * from usercard 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Usercard" >
+		<![CDATA[
+		 	select * from usercard
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByCardid" parameterType="Usercard" resultType="Usercard">
+		<![CDATA[
+		 	select * from usercard where cardid = #{cardid}
+		]]>
+	</select>
+	
+	<select id="findByCardidStr" parameterType="String" resultType="Usercard">
+		<![CDATA[
+		 	select * from usercard where cardid = #{cardid}
+		]]>
+	</select>
+	
+	
+	<insert id="save" parameterType="Usercard">
+		<![CDATA[
+			insert into usercard (netid,areacode,userid,serverid,cardid,mothercardflag,mothercardid,addtime,state,incardflag,stbno,price,remark)
+				 values (#{netid},#{areacode},#{userid},#{serverid},#{cardid},#{mothercardflag},#{mothercardid},#{addtime},#{state},#{incardflag},#{stbno},#{price},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Usercard">
+		<![CDATA[
+			update usercard set netid=#{netid},areacode=#{areacode},userid=#{userid},serverid=#{serverid},cardid=#{cardid},mothercardflag=#{mothercardflag},mothercardid=#{mothercardid},
+			                    addtime=#{addtime},state=#{state},incardflag=#{incardflag},stbno=#{stbno},price=#{price},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from usercard where id=#{id}
+		]]>		
+	</delete>
+	
+	<select id="findByStbno" parameterType="Usercard" resultType="Usercard">
+		<![CDATA[
+		 	select * from usercard where stbno = #{stbno}
+		]]>
+	</select>
+	
+	<select id="findByStbnoStr" parameterType="String" resultType="Usercard">
+		<![CDATA[
+		 	select * from usercard where stbno = #{stbno}
+		]]>
+	</select>
+	
+	<update id="updateStbno" parameterType="Usercard">
+		<![CDATA[
+			update usercard set stbno=#{stbno}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<update id="updateUsercardAreacode" parameterType="Usercard">
+		<![CDATA[
+			update usercard set areacode=#{areacode} where userid = #{userid}
+		]]>
+	</update>
+	
+	<update id="updateStateByCardid" parameterType="Usercard">
+		<![CDATA[
+			update usercard set state=#{state} where cardid = #{cardid}
+		]]>
+	</update>
+	
+	<select id="findByMothercardid" parameterType="String" resultType="Usercard">
+		<![CDATA[
+			select * from usercard where mothercardid = #{mothercardid} 
+		]]>
+	</select>
+	
+	<update id="updateState_batch" parameterType="Usercard">
+		<![CDATA[
+			update usercard set state=#{state} where userid =#{userid} and cardid in (${cardids})
+		]]>
+	</update>
+	
+	<select id="findByCardidStrBatch" parameterType="java.util.List"  resultType="Usercard" >
+		<![CDATA[
+		 	select * from usercard where cardid in
+		]]>
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">  
+		 #{item}  
+		</foreach> 
+	</select>
+	
+</mapper>

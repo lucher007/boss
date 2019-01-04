@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.ICaspnforcedccDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+		<if test="cardid != null and cardid != ''">
+			<![CDATA[
+				and cardid like concat('%',#{cardid},'%')
+			]]>
+		</if>
+		
+		<if test="querydate != null and querydate != ''">
+			<![CDATA[
+				and addtime like concat(#{querydate},'%')
+			]]>
+		</if>
+		<if test="queryversiontype != null and queryversiontype != ''">
+			<![CDATA[
+				and versiontype =#{queryversiontype}
+			]]>
+		</if>
+		<if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid =#{querynetid}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Caspnforcedcc" resultType="Caspnforcedcc">
+		<![CDATA[
+			select * from caspnforcedcc 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+
+	<select id="findByCount" parameterType="Caspnforcedcc" resultType="Integer">
+		<![CDATA[
+			select count(1) from caspnforcedcc 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Caspnforcedcc" resultType="Caspnforcedcc">
+		<![CDATA[
+			select * from caspnforcedcc 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Caspnforcedcc" >
+		<![CDATA[
+		 	select * from caspnforcedcc
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="Caspnforcedcc">
+		<![CDATA[
+			insert into caspnforcedcc (netid,cardid,conditioncontent,expiredtime,starttime,endtime,addtime,lockscreen,stbtype,pcrpid,serviceid,remark,
+			          versiontype,stbno,addressingmode,conditioncount,network_match,operator_match,area_match,device_type_match,
+			          terminal_type_match,vip_class_match,network_id,operator_id,area_id,device_type,terminal_type,vip_class,tsid
+			
+					)
+			values (#{netid},#{cardid},#{conditioncontent},#{expiredtime},#{starttime},#{endtime},#{addtime},#{lockscreen},#{stbtype},#{pcrpid},#{serviceid},#{remark},
+			          #{versiontype},#{stbno},#{addressingmode},#{conditioncount},#{network_match},#{operator_match},#{area_match},#{device_type_match},
+			          #{terminal_type_match},#{vip_class_match},#{network_id},#{operator_id},#{area_id},#{device_type},#{terminal_type},#{vip_class},#{tsid}
+			   
+			       )				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Caspnforcedcc">
+		<![CDATA[
+			update caspnforcedcc set netid=#{netid},cardid=#{cardid},conditioncontent=#{conditioncontent},expiredtime=#{expiredtime},
+									 starttime=#{starttime},endtime=#{endtime},addtime=#{addtime},lockscreen=#{lockscreen},stbtype=#{stbtype},pcrpid=#{pcrpid},
+									 serviceid=#{serviceid},remark=#{remark},versiontype=#{versiontype},stbno=#{stbno},addressingmode=#{addressingmode},conditioncount=#{conditioncount},
+									 network_match=#{network_match},operator_match=#{operator_match},area_match=#{area_match},device_type_match=#{device_type_match},
+									 terminal_type_match=#{terminal_type_match},vip_class_match=#{vip_class_match},network_id=#{network_id},operator_id=#{operator_id},
+									 area_id=#{area_id},device_type=#{device_type},terminal_type=#{terminal_type},vip_class=#{vip_class},tsid=#{tsid}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from caspnforcedcc where id=#{id}
+		]]>		
+	</delete>
+	
+</mapper>

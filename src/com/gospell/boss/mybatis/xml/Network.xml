@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.INetworkDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="querynetname != null and querynetname != ''">
+			<![CDATA[
+				and lower(netname) like lower(concat('%',#{querynetname},'%'))
+			]]>
+		</if>
+		<if test="code != null and code != ''">
+			<![CDATA[
+				and lower(code) like lower(concat('%',#{code},'%'))
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Network" resultType="Network">
+		<![CDATA[
+			select * from network 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	<select id="findByTree" parameterType="Network" resultType="Network">
+		<![CDATA[
+			select * from network
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+			order by code limit #{pager_offset}, #{pager_openset}
+		]]>
+	</select>
+
+	<select id="findByCount" parameterType="Network" resultType="Integer">
+		<![CDATA[
+			select count(1) from network 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Network" resultType="Network">
+		<![CDATA[
+			select * from network 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Network" >
+		<![CDATA[
+		 	select * from network
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByNetid" parameterType="Network" resultType="Network">
+		<![CDATA[
+		 	select * from network where netid = #{netid}
+		]]>
+	</select>
+	
+	<insert id="save" parameterType="Network">
+		<![CDATA[
+			insert into network (netid,pid,code,netname,nettype,address,remark)
+			   values (#{netid},#{pid},#{code},#{netname},#{nettype},#{address},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Network">
+		<![CDATA[
+			update network set netid=#{netid},pid=#{pid},code=#{code},netname=#{netname},
+			       nettype=#{nettype},address=#{address},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<update id="updateCode" parameterType="Network">
+		<![CDATA[
+			update network set code = replace(code,#{oldcode},#{newcode})
+			   where code like concat(#{oldcode}, '%');
+		]]>	
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from network where id=#{id}
+		]]>		
+	</delete>
+	
+	<select id="queryListByPid" resultType="Network" parameterType="Integer" >
+		<![CDATA[
+			select * from network where pid = #{pid}
+		]]>
+	</select> 
+	
+</mapper>

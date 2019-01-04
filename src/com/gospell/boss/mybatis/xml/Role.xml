@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IRoleDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">
+
+		<if test="queryrolecode != null and queryrolecode != ''">
+			<![CDATA[
+				and rolecode like concat('%',#{queryrolecode},'%')
+			]]>
+		</if>
+
+		<if test="queryrolename != null and queryrolename != ''">
+			<![CDATA[
+				and rolename like concat('%',#{queryrolename},'%')
+			]]>
+		</if>
+	</sql>
+
+	<select id="findByList" parameterType="Role" resultType="Role">
+		<![CDATA[
+			select * from role 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>
+	</select>
+
+	<select id="findByCount" parameterType="Role" resultType="Integer">
+		<![CDATA[
+			select count(1) from role 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+	</select>
+
+	<select id="queryByList" parameterType="Role" resultType="Role">
+		<![CDATA[
+			select * from role 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>
+	</select>
+
+	<select id="findById" parameterType="Integer" resultType="Role">
+		<![CDATA[
+		 	select * from role
+		]]>
+		<where>
+			<include refid="idColumns" />
+		</where>
+	</select>
+	
+	<select id="findByRolecode" parameterType="String" resultType="Role">
+		<![CDATA[
+		 	select * from role where rolecode = #{rolecode}
+		]]>
+	</select>
+	
+
+	<insert id="save" parameterType="Role">
+		<![CDATA[
+			insert into role (rolecode,rolename,type,remark) values (#{rolecode},#{rolename},#{type},#{remark})				
+		]]>
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+
+	<update id="update" parameterType="Role">
+		<![CDATA[
+			update role set rolecode=#{rolecode},rolename=#{rolename},type=#{type},remark=#{remark}
+		]]>
+		<where>
+			<include refid="idColumns" />
+		</where>
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from role where id=#{id}
+		]]>
+	</delete>
+
+</mapper>

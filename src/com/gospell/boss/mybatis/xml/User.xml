@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IUserDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+	    <if test="querynetid != null and querynetid != '' and querynetid != 'null'">
+			<![CDATA[
+				and u.netid = #{querynetid}
+			]]>
+		</if>
+		<if test="queryareacode != null and queryareacode != '' and queryareacode != 'null'">
+			<![CDATA[
+				and u.areacode like concat(#{queryareacodevalid},'%')
+			]]>
+		</if>
+		<if test="queryusercode != null and queryusercode != ''">
+			<![CDATA[
+				and LPAD(u.id, 10, 0) like concat('%',#{queryusercode},'%')
+			]]>
+		</if>
+		<if test="queryusername != null and queryusername != ''">
+			<![CDATA[
+				and u.username like concat('%',#{queryusername},'%')
+			]]>
+		</if>
+		<if test="querydocumentno != null and querydocumentno != ''">
+			<![CDATA[
+				and u.documentno like concat('%',#{querydocumentno},'%')
+			]]>
+		</if>
+		<if test="querytelephone != null and querytelephone != ''">
+			<![CDATA[
+				and u.telephone like concat('%',#{querytelephone},'%')
+			]]>
+		</if>
+		<if test="querymobile != null and querymobile != ''">
+			<![CDATA[
+				and u.mobile like concat('%',#{querymobile},'%')
+			]]>
+		</if>
+		<if test="queryaddress != null and queryaddress != ''">
+			<![CDATA[
+				and u.address like concat('%',#{queryaddress},'%')
+			]]>
+		</if>
+		<if test="querystate != null and querystate != ''">
+			<![CDATA[
+				and u.state = #{querystate}
+			]]>
+		</if>
+		<if test="querystbno != null and querystbno != ''">
+			<![CDATA[
+				and us.stbno like concat('%',#{querystbno},'%')
+			]]>
+		</if>
+		<if test="querycardid != null and querycardid != ''">
+			<![CDATA[
+				and uc.cardid like concat('%',#{querycardid},'%')
+			]]>
+		</if>
+		<if test="queryuserlevelid != null and queryuserlevelid != ''">
+			<![CDATA[
+				and u.userlevelid = #{queryuserlevelid}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="User" resultType="User">
+		<![CDATA[
+			select DISTINCT u.*
+              from user u 
+         left join userstb us on u.id = us.userid 
+         left join usercard uc on u.id = uc.userid 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by u.id desc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+		<select id="findByUserinfo" parameterType="User" resultType="User">
+		<![CDATA[
+			select  u.* from user u 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by u.areacode asc limit #{pager_offset},#{pager_openset}
+		]]>		
+	</select>
+	
+	
+	<select id="findByCount" parameterType="User" resultType="Integer">
+		<![CDATA[
+			select count(DISTINCT u.id) 
+	          from user u
+		 left join userstb us on u.id = us.userid 
+         left join usercard uc on u.id = uc.userid 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+		<select id="countByUserinfo" parameterType="User" resultType="Integer">
+		<![CDATA[
+			select count(1) from user u
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	
+	<select id="queryByList" parameterType="User" resultType="User">
+		<![CDATA[
+			select * from user u 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="User" >
+		<![CDATA[
+		 	select * from user u
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<select id="findByAnyInfo" parameterType="User"  resultType="User" >
+		<![CDATA[
+		 	select * from user u 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">			
+			<if test="usercode != null and usercode != ''">
+			<![CDATA[ 			
+ 					 	and LPAD(u.id, 8, 0) = #{usercode}
+ 			]]>
+			</if>
+		</trim>
+	</select>
+	
+	<select id="findByUsercode" parameterType="User" resultType="User">
+		<![CDATA[
+		 	select * from user where LPAD(u.id, 8, 0) = #{usercode}
+		]]>
+	</select>
+	
+	<insert id="save" parameterType="User">
+		<![CDATA[
+			insert into user (netid,areacode,username,usertype,mobile,telephone,documenttype,
+			                  documentno,email,address,password,paypassword,bankno,score,account,state,userlevelid,addtime,remark)
+			   values (#{netid},#{areacode},#{username},#{usertype},#{mobile},#{telephone},#{documenttype},
+			           #{documentno},#{email},#{address},#{password},#{paypassword},#{bankno},#{score},#{account},#{state},#{userlevelid},#{addtime},#{remark})				
+		]]>	
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="User">
+		<![CDATA[
+			update user set netid=#{netid},areacode=#{areacode},username=#{username},usertype=#{usertype},mobile=#{mobile},
+			                   telephone=#{telephone},documenttype=#{documenttype},documentno=#{documentno},email=#{email},address=#{address},
+			                   password=#{password},paypassword=#{paypassword},bankno=#{bankno},score=#{score},account=#{account},state=#{state},userlevelid=#{userlevelid},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from user where id=#{id}
+		]]>		
+	</delete>
+	
+	<update id="updatePassword" parameterType="User">
+		<![CDATA[
+			update user set password=#{password}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+		<update id="updatePaypassword" parameterType="User">
+		<![CDATA[
+			update user set paypassword=#{paypassword}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<update id="activeUser" parameterType="User">
+		<![CDATA[
+			update user set state = #{state}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<select id="findUserStateReportByCount" parameterType="User" resultType="Integer">
+  		<![CDATA[
+			select count(t.count) from (
+				select u.netid,u.areacode,u.state,count(*) as count FROM user u
+		]]>
+  		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>		
+		</trim>
+		<![CDATA[
+				GROUP BY u.netid, u.areacode,u.state ) t
+			]]>
+		
+    </select>
+	
+	
+	<select id="findUserStateReport" parameterType="User" resultType="User">
+  		<![CDATA[
+			select u.netid,u.areacode,u.state,count(*) as count FROM user u
+		]]>
+  		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>		
+		</trim>
+		<![CDATA[
+				GROUP BY u.netid, u.areacode,u.state
+			]]>
+		<if test="pager_openset != null and pager_openset != 0">
+			<![CDATA[
+		 	order by u.netid, u.areacode,u.state limit #{pager_offset},#{pager_openset}
+			]]>
+		</if>
+    </select>
+	
+	<update id="rechargeAccount" parameterType="User">
+		<![CDATA[
+			update user set account= account + #{rechargemoney} 
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+</mapper>

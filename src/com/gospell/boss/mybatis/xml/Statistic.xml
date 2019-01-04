@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IStatisticDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">
+		<if test="querynetid != null and querynetid != ''">
+			<![CDATA[
+				and netid = #{querynetid}
+			]]>
+		</if>
+	</sql>
+
+	<select id="findEntitlementAdded" parameterType="BusinessReport"
+		resultType="Integer">
+  		<![CDATA[
+			SELECT count(DISTINCT userid) FROM userbusinessdetail 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		<![CDATA[
+			productid = #{productid} AND businesstypekey="buyproduct" AND type=1 AND date(addtime) >= date(#{querystarttime}) AND date(addtime) <= date(#{queryendtime})
+		]]>
+		<if test="queryareacodevalid != null and queryareacodevalid != ''">
+	  		<![CDATA[
+				and areacode like concat(#{queryareacodevalid},'%')
+	        ]]>	  
+        	</if>
+		</trim>
+	</select>
+
+	<select id="findEntitlementExpired" parameterType="BusinessReport"
+		resultType="Integer">
+  		<![CDATA[
+			SELECT count(DISTINCT userid) FROM userbusinessdetail 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		<![CDATA[
+			productid = #{productid} AND businesstypekey="buyproduct" AND type=1 AND  date(starttime) != date(endtime)  AND  date(endtime) <= date(#{queryendtime}) AND date(endtime) >= date(#{querystarttime}) 
+		]]>
+		<if test="queryareacodevalid != null and queryareacodevalid != ''">
+	  		<![CDATA[
+				and areacode like concat(#{queryareacodevalid},'%')
+	        ]]>	  
+        	</if>
+		</trim>
+	</select>
+
+	<select id="findEntitlementRemoved" parameterType="BusinessReport"
+		resultType="Integer">
+  		<![CDATA[
+			SELECT count(DISTINCT userid) FROM userbusinessdetail 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		<![CDATA[	
+			productid = #{productid} AND businesstypekey="cancelproduct" AND type=1 AND date(addtime) >= date(#{querystarttime}) AND date(addtime) <= date(#{queryendtime})
+		]]>
+		<if test="queryareacodevalid != null and queryareacodevalid != ''">
+	  		<![CDATA[
+				and areacode like concat(#{queryareacodevalid},'%')
+	        ]]>	  
+        	</if>
+		</trim>
+	</select>
+
+	<select id="findOpeningBalance" parameterType="BusinessReport"
+		resultType="Integer">
+  		<![CDATA[
+			SELECT count(DISTINCT userid) FROM userbusinessdetail 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<![CDATA[
+			productid = #{productid} AND businesstypekey="buyproduct" AND type=1 AND  date(starttime) != date(endtime) AND date(endtime) >= date(#{querystarttime}) AND date(starttime) <= date(#{querystarttime})
+			]]>
+			<if test="queryareacodevalid != null and queryareacodevalid != ''">
+	  		<![CDATA[
+				and areacode like concat(#{queryareacodevalid},'%')
+	        ]]>	  
+        	</if>
+		</trim>
+	</select>
+
+	<select id="findClosingBalance" parameterType="BusinessReport"
+		resultType="Integer">
+  		<![CDATA[
+			SELECT count(DISTINCT userid) FROM userbusinessdetail 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			  <![CDATA[
+			productid = #{productid} AND businesstypekey="buyproduct" AND type=1 AND  date(starttime) != date(endtime) AND date(endtime) >= date(#{queryendtime}) AND date(starttime) <= date(#{queryendtime})
+			]]>
+			<if test="queryareacodevalid != null and queryareacodevalid != ''">
+	  		<![CDATA[
+				and areacode like concat(#{queryareacodevalid},'%')
+	        ]]>	  
+        	</if>
+		</trim>
+	</select>
+
+</mapper>

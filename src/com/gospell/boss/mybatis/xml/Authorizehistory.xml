@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IAuthorizehistoryDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">
+		<if test="querystarttime != null and querystarttime != ''">
+			<![CDATA[
+			 AND date(addtime) >= date(#{querystarttime})
+
+			]]>
+		</if>
+		
+		<if test="queryendtime != null and queryendtime != ''">
+			<![CDATA[
+			 AND date(addtime) <= date(#{queryendtime})
+			]]>
+		</if>
+		
+		<if test="queryterminalid != null and queryterminalid != ''">
+			<![CDATA[
+				and terminalid = #{queryterminalid}
+			]]>
+		</if>
+		
+		<if test="queryusercode != null and queryusercode != ''">
+			<![CDATA[
+				and LPAD(userid, 10, 0) like concat('%',#{queryusercode},'%')
+			]]>
+		</if>
+	</sql>
+
+	<select id="findByList" parameterType="Authorizehistory"
+		resultType="Authorizehistory">
+		<![CDATA[
+			select * from authorizehistory 	
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+		<![CDATA[
+		 	order by id desc limit #{pager_offset},#{pager_openset}
+		]]>
+	</select>
+
+	<select id="findByCount" parameterType="Authorizehistory"
+		resultType="Integer">
+		<![CDATA[
+			select count(1) from authorizehistory 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns" />
+		</trim>
+	</select>
+
+    <select id="queryByList" parameterType="Authorizehistory" resultType="Authorizehistory">
+		<![CDATA[
+			select * from authorizehistory 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+    
+    <insert id="save" parameterType="Authorizehistory">
+		<![CDATA[
+			insert into authorizehistory (netid,serverid,areacode,userid,terminalid,terminaltype,cardid,stbno,addtime,versiontype,commandtype,conditionaddr,command,remark)
+			   values (#{netid},#{serverid},#{areacode},#{userid},#{terminalid},#{terminaltype},#{cardid},#{stbno},#{addtime},#{versiontype},#{commandtype},#{conditionaddr},#{command},#{remark})				
+		]]>	
+		<selectKey resultType="Long" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Authorizehistory">
+		<![CDATA[
+			update authorizehistory set netid=#{netid},serverid=#{serverid},areacode=#{areacode},userid=#{userid},terminalid=#{terminalid},terminaltype=#{terminaltype},cardid=#{cardid},stbno=#{stbno},
+										addtime=#{addtime},versiontype=#{versiontype},
+										commandtype=#{commandtype},conditionaddr=#{conditionaddr},command=#{command},remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="BigInteger">
+		<![CDATA[
+			delete from authorizehistory where id=#{id}
+		]]>		
+	</delete>
+
+    <delete id="deleteAll" parameterType="BigInteger">
+		<![CDATA[
+			delete from authorizehistory
+		]]>		
+	</delete>
+</mapper>

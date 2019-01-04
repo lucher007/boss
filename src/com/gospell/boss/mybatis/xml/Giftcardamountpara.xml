@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gospell.boss.dao.IGiftcardamountparaDao">
+	<sql id="idColumns">
+   		<![CDATA[
+   			id=#{id}
+   		]]>
+	</sql>
+	<sql id="whereColumns">	
+		<if test="querystate  != null and querystate != ''">
+			<![CDATA[
+				and state = #{querystate}
+			]]>
+		</if>
+	</sql>
+	
+	<select id="findByList" parameterType="Giftcardamountpara" resultType="Giftcardamountpara">
+		<![CDATA[
+			select * from giftcardamountpara 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+		<if test ="pager_offset !=null and pager_openset != null and pager_openset!=0">
+		<![CDATA[
+		 	order by id asc limit #{pager_offset},#{pager_openset}
+		]]>
+		</if>
+	</select>
+	
+	<select id="findByCount" parameterType="Giftcardamountpara" resultType="Integer">
+		<![CDATA[
+			select count(1) from giftcardamountpara 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+		  <include refid="whereColumns"/>
+		</trim>
+	</select>
+	
+	<select id="queryByList" parameterType="Giftcardamountpara" resultType="Giftcardamountpara">
+		<![CDATA[
+			select * from giftcardamountpara 
+		]]>
+		<trim prefix="where" prefixOverrides="and|or">
+			<include refid="whereColumns"/>
+		</trim>
+		<![CDATA[
+		 	order by id asc
+		]]>		
+	</select> 
+	
+	<select id="findById" parameterType="Integer"  resultType="Giftcardamountpara" >
+		<![CDATA[
+		 	select * from giftcardamountpara
+		]]>
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="Giftcardamountpara">
+		<![CDATA[
+			insert into giftcardamountpara (parakey,amount,state,remark)
+			   values (#{parakey},#{amount},#{state},#{remark})				
+		]]>	
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			<![CDATA[
+				 select LAST_INSERT_ID() 
+			]]>
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="Giftcardamountpara">
+		<![CDATA[
+			update giftcardamountpara set parakey=#{parakey},amount=#{amount},state=#{state},
+			                   remark=#{remark}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+
+	<insert id="saveBatch" parameterType="java.util.List">
+       <![CDATA[
+        INSERT IGNORE INTO giftcardamountpara (parakey,amount,state,remark)	
+        VALUES
+        ]]>	
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.parakey},
+            #{item.amount},         
+            #{item.state},
+            #{item.remark}
+            )
+        </foreach>
+    </insert>
+	
+	
+	<delete id="emptyTable">
+		<![CDATA[
+			delete from giftcardamountpara
+		]]>		
+	</delete>
+
+	<delete id="delete" parameterType="Integer">
+		<![CDATA[
+			delete from giftcardamountpara where id=#{id}
+		]]>		
+	</delete>
+	
+	<update id="activeGiftcardamountpara" parameterType="Giftcardamountpara">
+		<![CDATA[
+			update giftcardamountpara set state = #{state}
+		]]>	
+		<where>
+			<include refid="idColumns"/>
+		</where>
+	</update>
+	
+	<select id="findByParakey" parameterType="String"  resultType="Giftcardamountpara" >
+		<![CDATA[
+		 	select * from giftcardamountpara where parakey = #{parakey}
+		]]>
+	</select>
+	
+</mapper>
